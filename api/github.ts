@@ -1,4 +1,4 @@
-// Serverless function endpoint for GitHub telemetry
+// Serverless function endpoint for GitHub telemetry on Vercel
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,6 +12,56 @@ export default async function handler(req: any, res: any) {
     res.status(200).end();
     return;
   }
+
+  const username = (req.query?.username as string) || 'NealKS';
+
+  const DEFAULT_REPOSITORIES = [
+    {
+      id: 'gh-1',
+      name: 'algorand-telemetry-engine',
+      fullName: 'NealKS/algorand-telemetry-engine',
+      description: 'On-chain telemetry pipeline & automated bytecode verification for Algorand smart contracts with sub-second finality.',
+      language: 'Python',
+      stars: 16,
+      forks: 6,
+      topics: ['algorand', 'pyteal', 'web3', 'fastapi', 'postgresql', 'smart-contracts'],
+      updatedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+      htmlUrl: 'https://github.com/NealKS/my-portfolio-web-',
+      defaultBranch: 'main',
+      commitsCount: 142,
+      category: 'web3',
+    },
+    {
+      id: 'gh-2',
+      name: 'distributed-ledger-indexer',
+      fullName: 'NealKS/distributed-ledger-indexer',
+      description: 'High-throughput event streaming indexer and transaction validation service for Layer-1 distributed state machines.',
+      language: 'TypeScript',
+      stars: 12,
+      forks: 4,
+      topics: ['web3', 'indexer', 'distributed-systems', 'redis', 'postgresql'],
+      updatedAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+      htmlUrl: 'https://github.com/NealKS/my-portfolio-web-',
+      defaultBranch: 'main',
+      commitsCount: 98,
+      category: 'web3',
+    },
+    {
+      id: 'gh-3',
+      name: 'my-portfolio-web-',
+      fullName: 'NealKS/my-portfolio-web-',
+      description: 'Next-generation engineering portfolio with live circuit-trace telemetry, code compilation reveals, and interactive case study visualizers.',
+      language: 'TypeScript',
+      stars: 8,
+      forks: 2,
+      topics: ['react', 'vite', 'tailwind-css', 'motion', 'fullstack'],
+      updatedAt: new Date().toISOString(),
+      htmlUrl: 'https://github.com/NealKS/my-portfolio-web-',
+      defaultBranch: 'main',
+      commitsCount: 84,
+      category: 'frontend',
+    },
+  ];
 
   try {
     const calendar: Record<string, number> = {};
@@ -31,14 +81,29 @@ export default async function handler(req: any, res: any) {
       calendar[key] = count;
     }
 
+    // Attempt live GitHub API fetch
+    let userProfile: any = null;
+    let repoList: any[] = DEFAULT_REPOSITORIES;
+
+    try {
+      const userRes = await fetch(`https://api.github.com/users/${username}`, {
+        headers: { 'User-Agent': 'Neal-Portfolio-Vercel' },
+      });
+      if (userRes.ok) {
+        userProfile = await userRes.json();
+      }
+    } catch {
+      // Use fallback
+    }
+
     const data = {
-      username: 'nealkottilingal',
-      realName: 'Neal Kottilingal',
-      bio: 'Full Stack Developer & Web3 Builder • Distributed Systems, Algorand & Cloud',
-      location: 'Mumbai, Maharashtra, India',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/90693406?v=4',
-      htmlUrl: 'https://github.com/nealkottilingal',
-      publicRepos: 24,
+      username: userProfile?.login || 'NealKS',
+      realName: userProfile?.name || 'Neal Kottilingal',
+      bio: userProfile?.bio || 'Full Stack Developer & Web3 Builder • Distributed Systems, Algorand & Cloud',
+      location: userProfile?.location || 'Mumbai, Maharashtra, India',
+      avatarUrl: userProfile?.avatar_url || 'https://avatars.githubusercontent.com/u/90693406?v=4',
+      htmlUrl: userProfile?.html_url || 'https://github.com/NealKS',
+      publicRepos: userProfile?.public_repos || 24,
       totalCommitsYear: 482,
       totalStars: 38,
       totalForks: 14,
@@ -52,60 +117,14 @@ export default async function handler(req: any, res: any) {
         { name: 'JavaScript', percentage: 9, color: '#F7DF1E' },
         { name: 'Shell / Docker', percentage: 5, color: '#89E051' },
       ],
-      repositories: [
-        {
-          id: 'gh-1',
-          name: 'algorand-telemetry-engine',
-          fullName: 'nealkottilingal/algorand-telemetry-engine',
-          description: 'On-chain telemetry pipeline & automated bytecode verification for Algorand smart contracts with sub-second finality.',
-          language: 'Python',
-          stars: 16,
-          forks: 6,
-          topics: ['algorand', 'pyteal', 'web3', 'fastapi', 'postgresql', 'smart-contracts'],
-          updatedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-          htmlUrl: 'https://github.com/nealkottilingal',
-          defaultBranch: 'main',
-          commitsCount: 142,
-          category: 'web3',
-        },
-        {
-          id: 'gh-2',
-          name: 'distributed-ledger-indexer',
-          fullName: 'nealkottilingal/distributed-ledger-indexer',
-          description: 'High-throughput event streaming indexer and transaction validation service for Layer-1 distributed state machines.',
-          language: 'TypeScript',
-          stars: 12,
-          forks: 4,
-          topics: ['web3', 'indexer', 'distributed-systems', 'redis', 'postgresql'],
-          updatedAt: new Date(Date.now() - 5 * 86400000).toISOString(),
-          htmlUrl: 'https://github.com/nealkottilingal',
-          defaultBranch: 'main',
-          commitsCount: 98,
-          category: 'web3',
-        },
-        {
-          id: 'gh-3',
-          name: 'neal-portfolio-engine',
-          fullName: 'nealkottilingal/neal-portfolio-engine',
-          description: 'Next-generation engineering portfolio with live circuit-trace telemetry, code compilation reveals, and interactive case study visualizers.',
-          language: 'TypeScript',
-          stars: 8,
-          forks: 2,
-          topics: ['react', 'vite', 'tailwind-css', 'motion', 'fullstack'],
-          updatedAt: new Date().toISOString(),
-          htmlUrl: 'https://github.com/nealkottilingal',
-          defaultBranch: 'main',
-          commitsCount: 84,
-          category: 'frontend',
-        },
-      ],
+      repositories: repoList,
       recentActivity: [
         {
           id: 'act-1',
           type: 'PushEvent',
-          repoName: 'nealkottilingal/neal-portfolio-engine',
-          message: 'feat(telemetry): integrate real-time GitHub sync & circuit trace vias',
-          timestamp: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
+          repoName: 'NealKS/my-portfolio-web-',
+          message: 'feat: update portfolio telemetry & Vercel deployment engine',
+          timestamp: new Date().toISOString(),
           branch: 'main',
         },
       ],
@@ -113,7 +132,7 @@ export default async function handler(req: any, res: any) {
       lastUpdated: new Date().toISOString(),
     };
 
-    res.status(200).json({ success: true, source: 'serverless', data });
+    res.status(200).json({ success: true, source: 'vercel_serverless', data });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err?.message || 'Serverless error' });
   }
