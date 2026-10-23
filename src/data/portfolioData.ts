@@ -1,6 +1,6 @@
 import { ProjectItem, SkillCategory, StatMetric } from '../types';
 
-export const USER_AVATAR_URL = '/assets/aistudio/DDDEB18E-D5E3-41B4-8D6B-DA11AA66F1DE_eb01862f.jpg';
+export const USER_AVATAR_URL = '/assets/aistudio/neal-portrait.jpg';
 
 export const PORTRAIT_HERO_URL = USER_AVATAR_URL;
 

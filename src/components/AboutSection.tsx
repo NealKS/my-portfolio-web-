@@ -238,7 +238,7 @@ export function AboutSection({ theme, onExploreProjects, onContactClick }: About
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-stone-950">
                   <img
                     alt="Neal Kottilingal Portrait"
-                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
                     src={PORTRAIT_ABOUT_URL}
                   />
