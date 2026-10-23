@@ -734,7 +734,7 @@ app.post('/api/contact', async (req, res) => {
     }
 
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const destinationEmail = process.env.CONTACT_DESTINATION_EMAIL || 'nealkottilngal06@gmail.com';
+    const destinationEmail = process.env.CONTACT_DESTINATION_EMAIL || 'neal.kottilingal.in@gmail.com';
     let deliveredViaEmail = false;
     let deliveryMethod = 'stored_locally';
     let deliveryError: string | undefined;

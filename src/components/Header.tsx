@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sun, Moon, FileDown, Menu, X, Monitor, Layers } from 'lucide-react';
 import { ScreenView, ThemeMode } from '../types';
+import { USER_AVATAR_URL } from '../data/portfolioData';
 
 interface HeaderProps {
   theme: ThemeMode;
@@ -70,23 +71,31 @@ export function Header({
         <motion.button
           id="brand-logo-btn"
           onClick={() => handleNavClick('hero', '#hero')}
-          whileHover={{ scale: 1.04 }}
+          whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.96 }}
-          className="flex items-center gap-3 group text-left focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-lg p-1 transition-transform cursor-pointer"
+          className="flex items-center gap-3.5 group text-left focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-xl p-1 transition-all cursor-pointer"
         >
-          <motion.div
-            whileHover={{ rotate: 90 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-md shadow-amber-500/20"
-          >
-            {/* Geometric Cross / Grid Icon Inspired by Qurifolio Mark */}
-            <div className="grid grid-cols-2 gap-1 p-2">
-              <span className="w-1.5 h-1.5 bg-white rounded-sm"></span>
-              <span className="w-1.5 h-1.5 bg-stone-900 rounded-sm"></span>
-              <span className="w-1.5 h-1.5 bg-stone-900 rounded-sm"></span>
-              <span className="w-1.5 h-1.5 bg-white rounded-sm"></span>
-            </div>
-          </motion.div>
+          <div className="relative">
+            <motion.div
+              whileHover={{ rotate: 4, scale: 1.08 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-300 shadow-lg shadow-amber-500/25 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                src={USER_AVATAR_URL}
+                alt="Neal Kottilingal Logo"
+                className="w-full h-full object-cover object-top rounded-full"
+              />
+            </motion.div>
+            {/* Active Live Indicator */}
+            <span
+              className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0A0D12] shadow-sm flex items-center justify-center"
+              title="Online / Ready to Collaborate"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-white/90 animate-pulse"></span>
+            </span>
+          </div>
+
           <div className="flex flex-col">
             <span
               className={`text-xl font-extrabold tracking-tight leading-none ${
@@ -95,8 +104,10 @@ export function Header({
             >
               Neal<span className="text-amber-500">.</span>
             </span>
-            <span className="text-[10px] font-semibold tracking-wider uppercase text-stone-500 dark:text-stone-400 mt-1">
-              Full Stack • Web3
+            <span className="text-[10px] font-semibold tracking-wider uppercase text-stone-500 dark:text-stone-400 mt-1 flex items-center gap-1.5">
+              <span>Full Stack</span>
+              <span className="w-1 h-1 rounded-full bg-amber-500"></span>
+              <span>Web3</span>
             </span>
           </div>
         </motion.button>

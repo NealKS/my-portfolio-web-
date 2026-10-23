@@ -1,16 +1,16 @@
 import { ProjectItem, SkillCategory, StatMetric } from '../types';
 
-export const PORTRAIT_HERO_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAibcYNazKgWKRU7OcFSUBamnca85KpJfxRTtUvFU3Uq1sxcffKM_YsuJadj1nXU-zJVe8Hh3t3bruxdJIIraitEBuw6gYBCyLszPuuxHh44zrV2I_p-n8lObZQ4ff-hH1mSop8ne-7Shx20Ekm6t3PcwvuvNUwUryi3XXmc5nShEgcWIjLWeWccZjwoCrzmPuW12gnj_UUmA14sECFxSYgFLdAoyjDcTfierJEO3ar2nMpFd6Bl_WurRZcIKZ-kkWk9YA';
+export const USER_AVATAR_URL = '/assets/aistudio/DDDEB18E-D5E3-41B4-8D6B-DA11AA66F1DE_eb01862f.jpg';
 
-export const PORTRAIT_ABOUT_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCKHI25JDw2ueksa-bREyA5QbKKiDUbiVI_SAJ-WMRoocse9z_Vj0bPT6_iMxHXockH57oohlQInlgrBTaL8SpPjb73JUwI5-p6X-s68rE3Kjro8PbJ3TI70mbovuEIW0ue3FKlMbgzRSlqRzKuXwwtDuv9FbwRlhNfzke2t4LM0FVJoVNpVTXz8ygicMHcW0oZUdmnccW1ApIzrEiMf0fWiHhgO-w1fIbkg0_3g-ujCSQl2FaL2gsVASY-vZOvcrd2x0c';
+export const PORTRAIT_HERO_URL = USER_AVATAR_URL;
+
+export const PORTRAIT_ABOUT_URL = USER_AVATAR_URL;
 
 export const PERSONAL_INFO = {
   name: 'Neal Kottilingal',
   tagline: 'Full Stack Developer & Web3 Builder',
   location: 'Mumbai, Maharashtra, India',
-  email: 'nealkottilngal06@gmail.com',
+  email: 'neal.kottilingal.in@gmail.com',
   github: 'https://github.com/NealKS',
   linkedin: 'https://linkedin.com',
   leetcode: 'https://leetcode.com/u/KjimQyxyX0/',
