@@ -1,0 +1,177 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.font-hero {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.stroke-text-light {
+  -webkit-text-stroke: 1.5px rgba(17, 24, 39, 0.4);
+  color: transparent;
+}
+
+.stroke-text-dark {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.28);
+  color: transparent;
+}
+
+/* =========================================================================
+   FUTURISTIC CODING MICRO-INTERACTIONS & EFFECTS
+   ========================================================================= */
+
+/* Cyber scanline flicker effect for buttons on hover */
+@keyframes scanlineFlicker {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+@keyframes terminalBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background-color: #4FD1C5;
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: terminalBlink 0.9s infinite;
+}
+
+/* Futuristic interactive button class with scanline flicker & code-terminal bracket cues */
+.cyber-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(79, 209, 197, 0) 0%,
+    rgba(79, 209, 197, 0.14) 50%,
+    rgba(242, 169, 59, 0.18) 51%,
+    rgba(242, 169, 59, 0) 100%
+  );
+  background-size: 100% 200%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.cyber-btn:hover::before {
+  opacity: 1;
+  animation: scanlineFlicker 0.45s linear infinite;
+}
+
+.cyber-btn:active {
+  transform: scale(0.96);
+  filter: brightness(1.15);
+}
+
+/* Faint PCB Circuit Glow Filter */
+.circuit-glow-teal {
+  filter: drop-shadow(0 0 8px rgba(79, 209, 197, 0.75)) drop-shadow(0 0 16px rgba(79, 209, 197, 0.4));
+}
+
+.circuit-glow-amber {
+  filter: drop-shadow(0 0 8px rgba(242, 169, 59, 0.8)) drop-shadow(0 0 16px rgba(242, 169, 59, 0.45));
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 16s linear infinite;
+}
+
+.animate-ticker {
+  display: flex;
+  width: 200%;
+  animation: ticker 28s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+.animate-float {
+  animation: floatGentle 4.5s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 209, 197, 0.4);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(242, 169, 59, 0.8);
+}
