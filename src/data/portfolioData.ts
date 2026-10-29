@@ -1,6 +1,6 @@
 import { ProjectItem, SkillCategory, StatMetric } from '../types';
 
-export const USER_AVATAR_URL = '/assets/aistudio/neal-portrait.jpg';
+export const USER_AVATAR_URL = '/assets/aistudio/IMG_9024_7ebf63d8.jpg';
 
 export const PORTRAIT_HERO_URL = USER_AVATAR_URL;
 
@@ -13,7 +13,8 @@ export const PERSONAL_INFO = {
   email: 'neal.kottilingal.in@gmail.com',
   github: 'https://github.com/NealKS',
   linkedin: 'https://linkedin.com',
-  leetcode: 'https://leetcode.com/u/KjimQyxyX0/',
+  leetcode: 'https://leetcode.com/u/NealSK/',
+  instagram: 'https://instagram.com/i.am.nealsk',
   bio: 'Passionate full-stack developer dedicated to architecting resilient distributed systems, intuitive modern user interfaces, and verifiable blockchain smart contracts. With an agile problem-solving mindset and deep roots in Mumbai tech ecosystem, I bridge complex backend logic with seamless product experiences.',
 };
 

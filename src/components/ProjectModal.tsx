@@ -60,7 +60,7 @@ export function ProjectModal({ project, theme, onClose }: ProjectModalProps) {
           </p>
 
           {/* Metrics Grid */}
-          <div className="grid grid-cols-3 gap-3 mb-6 p-4 rounded-2xl bg-stone-100 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 p-3 sm:p-4 rounded-2xl bg-stone-100 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800">
             {project.metrics.map((m, idx) => (
               <div key={idx} className="text-center">
                 <div className="text-xs text-stone-500 dark:text-stone-400 font-medium">

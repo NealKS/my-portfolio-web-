@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { GitHubProfileData, GitHubRepo, ThemeMode } from '../types';
 import { AnimatedCounter } from './AnimatedCounter';
+import { USER_AVATAR_URL } from '../data/portfolioData';
 import { CodeCompileReveal } from './CodeCompileReveal';
 
 interface GitHubSectionProps {
@@ -35,7 +36,7 @@ const FALLBACK_GITHUB_DATA: GitHubProfileData = {
   realName: 'NEAL Kottilingal',
   bio: 'Full Stack Engineer & Web3 Protocol Architect • Distributed Systems, Computer Vision & Smart Contracts',
   location: 'Mumbai, Maharashtra, India',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+  avatarUrl: USER_AVATAR_URL,
   htmlUrl: 'https://github.com/NealKS',
   publicRepos: 24,
   totalCommitsYear: 482,

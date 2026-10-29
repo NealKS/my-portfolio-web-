@@ -15,6 +15,7 @@ import {
 import { LeetCodeProfileData, LeetCodeSubmission, ThemeMode } from '../types';
 import { AnimatedCounter } from './AnimatedCounter';
 import { CodeCompileReveal } from './CodeCompileReveal';
+import { USER_AVATAR_URL } from '../data/portfolioData';
 
 interface LeetCodeSectionProps {
   theme: ThemeMode;
@@ -120,13 +121,13 @@ const DEFAULT_SUBMISSION_CALENDAR: Record<string, number> = {
 async function fetchDirectFromPublicApi(): Promise<LeetCodeProfileData | null> {
   try {
     const [profileRes, acRes, calRes] = await Promise.all([
-      fetch('https://alfa-leetcode-api.onrender.com/userProfile/KjimQyxyX0')
+      fetch('https://alfa-leetcode-api.onrender.com/userProfile/NealSK')
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
-      fetch('https://alfa-leetcode-api.onrender.com/KjimQyxyX0/acSubmission')
+      fetch('https://alfa-leetcode-api.onrender.com/NealSK/acSubmission')
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
-      fetch('https://alfa-leetcode-api.onrender.com/KjimQyxyX0/calendar')
+      fetch('https://alfa-leetcode-api.onrender.com/NealSK/calendar')
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
     ]);
@@ -153,10 +154,10 @@ async function fetchDirectFromPublicApi(): Promise<LeetCodeProfileData | null> {
     }));
 
     return {
-      username: 'KjimQyxyX0',
+      username: 'NealSK',
       realName: 'NEAL Kottilingal',
       ranking: profileRes.ranking || 5000001,
-      userAvatar: 'https://assets.leetcode.com/users/KjimQyxyX0/avatar_1760594672.png',
+      userAvatar: USER_AVATAR_URL,
       totalSolved: profileRes.totalSolved,
       totalQuestions: 4046,
       easySolved: profileRes.easySolved ?? 4,
@@ -440,7 +441,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
               >
                 Real-time telemetry and activity logs automatically synced directly with{' '}
                 <span className="font-semibold font-mono text-amber-500">
-                  leetcode.com/u/KjimQyxyX0
+                  leetcode.com/u/NealSK
                 </span>
                 . Every newly solved problem and submission streak is automatically updated.
               </p>
@@ -473,7 +474,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
 
                 <motion.a
                   id="open-leetcode-profile-btn"
-                  href="https://leetcode.com/u/KjimQyxyX0/"
+                  href="https://leetcode.com/u/NealSK/"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, y: -1 }}
@@ -539,10 +540,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden ring-2 ring-amber-500/40 shrink-0">
                   <img
-                    src={
-                      data?.userAvatar ||
-                      'https://assets.leetcode.com/users/KjimQyxyX0/avatar_1760594672.png'
-                    }
+                    src={USER_AVATAR_URL}
                     alt="NEAL Kottilingal LeetCode Avatar"
                     className="w-full h-full object-cover object-top"
                   />
@@ -558,7 +556,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
                     NEAL Kottilingal
                   </h3>
                   <div className="text-xs font-mono text-amber-500 font-semibold truncate">
-                    @KjimQyxyX0
+                    @NealSK
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 mt-1">
                     <span>Rank ~5,000,000</span>
@@ -904,7 +902,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
                 </div>
 
                 <motion.a
-                  href="https://leetcode.com/u/KjimQyxyX0/"
+                  href="https://leetcode.com/u/NealSK/"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}

@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="1200" height="850">
+  <defs>
+    <linearGradient id="certBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1318"/>
+      <stop offset="50%" stop-color="#141B24"/>
+      <stop offset="100%" stop-color="#0B0F14"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="40%" stop-color="#FCD34D"/>
+      <stop offset="70%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14B8A6"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+    <pattern id="guilloche" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M0 20 Q10 0 20 20 T40 20 M0 20 Q10 40 20 20 T40 20" fill="none" stroke="rgba(245, 158, 11, 0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="850" fill="url(#certBg)"/>
+  <rect width="1200" height="850" fill="url(#guilloche)"/>
+
+  <!-- Ornate Double Border -->
+  <rect x="35" y="35" width="1130" height="780" rx="12" fill="none" stroke="url(#goldGrad)" stroke-width="3" opacity="0.85"/>
+  <rect x="48" y="48" width="1104" height="754" rx="8" fill="none" stroke="rgba(245, 158, 11, 0.3)" stroke-width="1" stroke-dasharray="8 4"/>
+
+  <!-- Corner Cornerpieces -->
+  <g stroke="url(#goldGrad)" stroke-width="2" fill="none">
+    <path d="M48 90 L48 48 L90 48 M56 75 L56 56 L75 56"/>
+    <path d="M1152 90 L1152 48 L1110 48 M1144 75 L1144 56 L1125 56"/>
+    <path d="M48 760 L48 802 L90 802 M56 775 L56 794 L75 794"/>
+    <path d="M1152 760 L1152 802 L1110 802 M1144 775 L1144 794 L1125 794"/>
+  </g>
+
+  <!-- Issuer Header -->
+  <g transform="translate(600, 130)" text-anchor="middle">
+    <!-- Algorand Emblem -->
+    <circle cx="0" cy="-35" r="28" fill="#141B24" stroke="url(#goldGrad)" stroke-width="2"/>
+    <polygon points="-8,-48 10,-48 16,-22 -2,-22" fill="url(#goldGrad)"/>
+    <polygon points="-16,-22 2,-22 8,2 -10,2" fill="url(#goldGrad)"/>
+    
+    <text y="15" font-family="'Space Grotesk', system-ui, sans-serif" font-size="14" font-weight="700" letter-spacing="6" fill="#14B8A6" text-transform="uppercase">
+      ALGORAND PROTOCOL ECOSYSTEM • VERIFIED CREDENTIAL
+    </text>
+    <text y="48" font-family="'Space Grotesk', system-ui, sans-serif" font-size="28" font-weight="800" letter-spacing="2" fill="#FFFFFF">
+      CERTIFICATE OF PROTOCOL ENGINEERING
+    </text>
+  </g>
+
+  <!-- Subtitle -->
+  <text x="600" y="240" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-style="italic" fill="#94A3B8">
+    This credential formally recognizes that
+  </text>
+
+  <!-- Recipient Name -->
+  <g transform="translate(600, 315)" text-anchor="middle">
+    <text font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="46" font-weight="900" fill="url(#goldGrad)" letter-spacing="1">
+      Neal Kottilingal
+    </text>
+    <line x1="-240" y1="22" x2="240" y2="22" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.6"/>
+  </g>
+
+  <!-- Description Body -->
+  <text x="600" y="385" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" fill="#CBD5E1" max-width="800">
+    has successfully demonstrated advanced competency in Smart Contract Architecture,
+  </text>
+  <text x="600" y="415" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" fill="#CBD5E1">
+    PyTeAL Bytecode Verification, and Real-Time On-Chain Telemetry Pipeline Engineering.
+  </text>
+
+  <!-- Achievement Badge / Seal -->
+  <g transform="translate(600, 520)">
+    <!-- Gold Medallion Ribbon -->
+    <path d="M-30 40 L-40 100 L0 80 L40 100 L30 40 Z" fill="#D97706" opacity="0.7"/>
+    <circle cx="0" cy="0" r="48" fill="#1E293B" stroke="url(#goldGrad)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="41" fill="none" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1.5" stroke-dasharray="4 2"/>
+    <text x="0" y="-8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#F59E0B" letter-spacing="1.5">
+      TOP TIER
+    </text>
+    <text x="0" y="10" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="900" fill="#FFFFFF">
+      2026
+    </text>
+    <text x="0" y="24" text-anchor="middle" font-family="system-ui, sans-serif" font-size="9" font-weight="600" fill="#14B8A6" letter-spacing="1">
+      VERIFIED
+    </text>
+  </g>
+
+  <!-- Footer Signatures & Metadata -->
+  <g transform="translate(180, 680)">
+    <line x1="0" y1="0" x2="240" y2="0" stroke="#475569" stroke-width="1"/>
+    <text x="120" y="-12" text-anchor="middle" font-family="'Brush Script MT', cursive, sans-serif" font-size="24" fill="#E2E8F0">
+      Algorand Dev Council
+    </text>
+    <text x="120" y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" letter-spacing="1">
+      AUTHORIZING BODY
+    </text>
+    <text x="120" y="36" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="10" fill="#64748B">
+      Global Developer Guild
+    </text>
+  </g>
+
+  <g transform="translate(780, 680)">
+    <line x1="0" y1="0" x2="240" y2="0" stroke="#475569" stroke-width="1"/>
+    <text x="120" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700" fill="#F59E0B">
+      March 2026
+    </text>
+    <text x="120" y="20" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" letter-spacing="1">
+      DATE OF CONFERRAL
+    </text>
+    <text x="120" y="36" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="10" fill="#64748B">
+      Mumbai, India • Global Ledger
+    </text>
+  </g>
+
+  <!-- Certificate ID Bar -->
+  <g transform="translate(600, 775)" text-anchor="middle">
+    <text font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#475569" letter-spacing="2">
+      CREDENTIAL ID: <tspan fill="#F59E0B">ALGO-2026-NK-08492</tspan> • SHA256: 9E4F7...B2A0 • BLOCKCHAIN VERIFIED
+    </text>
+  </g>
+</svg>

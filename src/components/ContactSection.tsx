@@ -17,6 +17,7 @@ import {
   Clock,
   Sparkles,
   X,
+  Instagram,
 } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { ThemeMode } from '../types';
@@ -175,15 +176,14 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                   onClick={copyEmailToClipboard}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.94 }}
-                  className="cyber-btn px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 cursor-pointer"
+                  className="cyber-btn px-4 sm:px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 cursor-pointer max-w-full overflow-hidden"
                 >
                   {copied ? (
-                    <Check className="w-4 h-4 text-stone-950" />
+                    <Check className="w-4 h-4 text-stone-950 shrink-0" />
                   ) : (
-                    <Copy className="w-4 h-4 text-stone-950" />
+                    <Copy className="w-4 h-4 text-stone-950 shrink-0" />
                   )}
-                  <span>{copied ? 'Copied to Clipboard!' : `Copy: ${PERSONAL_INFO.email}`}</span>
-                  <span className="terminal-cursor !h-2.5 !w-1 bg-stone-950" />
+                  <span className="truncate">{copied ? 'Copied to Clipboard!' : `Copy: ${PERSONAL_INFO.email}`}</span>
                 </motion.button>
 
                 <motion.a
@@ -575,13 +575,22 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                 className="hover:text-amber-400 flex items-center gap-2 transition-colors"
               >
                 <Code2 className="w-4 h-4 text-amber-500" />
-                <span>LeetCode @KjimQyxyX0</span>
+                <span>LeetCode @NealSK</span>
+              </a>
+              <a
+                href={PERSONAL_INFO.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-pink-400 flex items-center gap-2 transition-colors"
+              >
+                <Instagram className="w-4 h-4 text-pink-400" />
+                <span>Instagram @i.am.nealsk</span>
               </a>
               <a
                 href={`mailto:${PERSONAL_INFO.email}`}
                 className="hover:text-white flex items-center gap-2 transition-colors"
               >
-                <Mail className="w-4 h-4" />
+                <Mail className="w-4 h-4 text-teal-400" />
                 <span>{PERSONAL_INFO.email}</span>
               </a>
             </div>

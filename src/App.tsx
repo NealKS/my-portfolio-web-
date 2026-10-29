@@ -7,6 +7,7 @@ import { SkillsSection } from './components/SkillsSection';
 import { LeetCodeSection } from './components/LeetCodeSection';
 import { GitHubSection } from './components/GitHubSection';
 import { ProjectsSection } from './components/ProjectsSection';
+import { ChaptersSection } from './components/ChaptersSection';
 import { ContactSection } from './components/ContactSection';
 import { ProjectModal } from './components/ProjectModal';
 import { ResumeModal } from './components/ResumeModal';
@@ -78,7 +79,7 @@ export default function App() {
   };
 
   // Screen order for next/prev screen navigation in single screen mode
-  const screensList: ScreenView[] = ['hero', 'about', 'skills', 'leetcode', 'github', 'projects', 'contact'];
+  const screensList: ScreenView[] = ['hero', 'about', 'skills', 'leetcode', 'github', 'projects', 'chapters', 'contact'];
   const currentScreenIndex = screensList.indexOf(activeScreen);
 
   return (
@@ -129,6 +130,8 @@ export default function App() {
                 ? 'GitHub Repos & Activity'
                 : activeScreen === 'projects'
                 ? 'Featured Projects'
+                : activeScreen === 'chapters'
+                ? 'Chapters & Milestones'
                 : 'Contact & Collaboration'}
             </span>
           </div>
@@ -195,6 +198,10 @@ export default function App() {
               onOpenCaseStudy={(proj) => setSelectedProject(proj)}
               onContactClick={() => handleNavClick('contact')}
             />
+            <ChaptersSection
+              theme={theme}
+              onContactClick={() => handleNavClick('contact')}
+            />
             <ContactSection
               theme={theme}
               onScrollToTop={scrollToTop}
@@ -253,6 +260,16 @@ export default function App() {
               <ProjectsSection
                 theme={theme}
                 onOpenCaseStudy={(proj) => setSelectedProject(proj)}
+                onContactClick={() => {
+                  setActiveScreen('contact');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            )}
+
+            {activeScreen === 'chapters' && (
+              <ChaptersSection
+                theme={theme}
                 onContactClick={() => {
                   setActiveScreen('contact');
                   window.scrollTo({ top: 0, behavior: 'smooth' });

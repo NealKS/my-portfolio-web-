@@ -73,10 +73,10 @@ async function resolveQuestionDifficulty(titleSlug: string): Promise<string> {
 
 // Default snapshot based on verified profile data (6 solved: 4 Easy, 1 Medium, 1 Hard)
 const DEFAULT_LEETCODE_SNAPSHOT = {
-  username: 'KjimQyxyX0',
+  username: 'NealSK',
   realName: 'NEAL Kottilingal',
   ranking: 5000001,
-  userAvatar: 'https://assets.leetcode.com/users/KjimQyxyX0/avatar_1760594672.png',
+  userAvatar: '/assets/aistudio/IMG_9024_7ebf63d8.jpg',
   totalSolved: 6,
   totalQuestions: 4046,
   easySolved: 4,
@@ -157,7 +157,7 @@ const DEFAULT_LEETCODE_SNAPSHOT = {
 };
 
 // Core fetcher function for LeetCode profile and question history
-async function fetchLeetCodeProfile(username = 'KjimQyxyX0') {
+async function fetchLeetCodeProfile(username = 'NealSK') {
   const graphqlQuery = {
     query: `
       query userProfileAndRecent($username: String!) {
@@ -349,8 +349,7 @@ async function fetchLeetCodeProfile(username = 'KjimQyxyX0') {
     username: matchedUser.username || username,
     realName: matchedUser.profile?.realName || 'NEAL Kottilingal',
     ranking: matchedUser.profile?.ranking || 5000001,
-    userAvatar:
-      matchedUser.profile?.userAvatar || DEFAULT_LEETCODE_SNAPSHOT.userAvatar,
+    userAvatar: '/assets/aistudio/IMG_9024_7ebf63d8.jpg',
     totalSolved,
     totalQuestions,
     easySolved,
@@ -377,7 +376,7 @@ async function fetchLeetCodeProfile(username = 'KjimQyxyX0') {
 // Background auto-refresh every 8 seconds so cache is perpetually fresh
 setInterval(async () => {
   try {
-    await fetchLeetCodeProfile('KjimQyxyX0');
+    await fetchLeetCodeProfile('NealSK');
   } catch (e) {
     // Non-blocking background catch
   }
@@ -385,7 +384,7 @@ setInterval(async () => {
 
 // API Endpoint to fetch live LeetCode stats
 app.get('/api/leetcode', async (req, res) => {
-  const username = (req.query.username as string) || 'KjimQyxyX0';
+  const username = (req.query.username as string) || 'NealSK';
   const forceRefresh = req.query.refresh === 'true';
 
   const now = Date.now();
@@ -583,7 +582,7 @@ const DEFAULT_GITHUB_SNAPSHOT = {
   realName: 'Neal Kottilingal',
   bio: 'Full Stack Developer & Web3 Builder • Distributed Systems, Algorand & Cloud',
   location: 'Mumbai, Maharashtra, India',
-  avatarUrl: 'https://avatars.githubusercontent.com/u/90693406?v=4',
+  avatarUrl: '/assets/aistudio/IMG_9024_7ebf63d8.jpg',
   htmlUrl: 'https://github.com/NealKS',
   publicRepos: 24,
   totalCommitsYear: 482,

@@ -94,6 +94,13 @@ export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
                   <Mail className="w-3.5 h-3.5 text-amber-500" />
                   <span>{PERSONAL_INFO.email}</span>
                 </div>
+                <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-1 text-[11px] text-stone-500 dark:text-stone-400">
+                  <a href={PERSONAL_INFO.github} target="_blank" rel="noopener noreferrer" className="hover:text-amber-500 transition-colors">github.com/NealKS</a>
+                  <span>•</span>
+                  <a href={PERSONAL_INFO.leetcode} target="_blank" rel="noopener noreferrer" className="hover:text-amber-500 transition-colors">leetcode.com/u/NealSK</a>
+                  <span>•</span>
+                  <a href={PERSONAL_INFO.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-amber-500 transition-colors">@i.am.nealsk</a>
+                </div>
               </div>
             </div>
 

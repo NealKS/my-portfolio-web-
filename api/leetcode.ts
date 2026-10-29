@@ -16,13 +16,13 @@ export default async function handler(req: any, res: any) {
 
   try {
     const [profileRes, acRes, calRes] = await Promise.all([
-      fetch('https://alfa-leetcode-api.onrender.com/userProfile/KjimQyxyX0')
+      fetch('https://alfa-leetcode-api.onrender.com/userProfile/NealSK')
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
-      fetch('https://alfa-leetcode-api.onrender.com/KjimQyxyX0/acSubmission')
+      fetch('https://alfa-leetcode-api.onrender.com/NealSK/acSubmission')
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
-      fetch('https://alfa-leetcode-api.onrender.com/KjimQyxyX0/calendar')
+      fetch('https://alfa-leetcode-api.onrender.com/NealSK/calendar')
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
     ]);
@@ -62,10 +62,10 @@ export default async function handler(req: any, res: any) {
     const hardSolved = profileRes?.hardSolved ?? 1;
 
     const data = {
-      username: 'KjimQyxyX0',
+      username: 'NealSK',
       realName: 'NEAL Kottilingal',
       ranking: profileRes?.ranking || 5000001,
-      userAvatar: 'https://assets.leetcode.com/users/KjimQyxyX0/avatar_1760594672.png',
+      userAvatar: '/assets/aistudio/IMG_9024_7ebf63d8.jpg',
       totalSolved,
       totalQuestions: 4046,
       easySolved,

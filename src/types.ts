@@ -1,6 +1,24 @@
 export type ThemeMode = 'light' | 'dark';
 
-export type ScreenView = 'all' | 'hero' | 'about' | 'skills' | 'leetcode' | 'github' | 'projects' | 'contact';
+export type ScreenView = 'all' | 'hero' | 'about' | 'skills' | 'leetcode' | 'github' | 'projects' | 'chapters' | 'contact';
+
+export interface ChapterEvent {
+  id: string;
+  title: string;
+  year: number;
+  date: string;
+  displayDate?: string;
+  category: 'achievement' | 'experience';
+  badge: string;
+  achievementRank?: string;
+  issuer?: string;
+  location?: string;
+  coverImage: string;
+  images: string[];
+  linkedinUrl?: string;
+  skills?: string[];
+  highlights?: string[];
+}
 
 export interface LeetCodeSubmission {
   title: string;
