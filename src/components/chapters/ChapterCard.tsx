@@ -1,174 +1,41 @@
-import { motion } from 'motion/react';
-import {
-  Award,
-  Sparkles,
-  Calendar,
-  ArrowUpRight,
-  ShieldCheck,
-  MapPin,
-} from 'lucide-react';
-import React from 'react';
+import { useRef } from 'react';
+import { motion, useReducedMotion, useInView } from 'motion/react';
+import { ArrowUpRight, Maximize2, Linkedin } from 'lucide-react';
 import { ChapterEvent, ThemeMode } from '../../types';
+import { chapterMetadata, linkedinPostUrl } from '../../data/chaptersData';
+import './ChapterCard.css';
+import { ChapterMedia } from './ChapterMedia';
 
-interface ChapterCardProps {
-  key?: React.Key;
-  event: ChapterEvent;
-  theme: ThemeMode;
-  onOpen: (event: ChapterEvent) => void;
-  index: number;
-}
-
-export function ChapterCard({ event, theme, onOpen, index }: ChapterCardProps) {
-  const isAchievement = event.category === 'achievement';
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 25 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
-      whileHover={{ y: -6, scale: 1.01 }}
-      onClick={() => onOpen(event)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onOpen(event);
-        }
-      }}
-      tabIndex={0}
-      role="button"
-      aria-label={`View certificate for ${event.title}`}
-      className={`group relative rounded-3xl overflow-hidden border transition-all duration-300 cursor-pointer flex flex-col focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-        isAchievement
-          ? theme === 'dark'
-            ? 'bg-stone-900/90 border-stone-800 hover:border-amber-500/70 shadow-lg shadow-black/40 hover:shadow-2xl hover:shadow-amber-500/10'
-            : 'bg-white border-stone-200/90 hover:border-amber-500/70 shadow-md hover:shadow-xl hover:shadow-amber-500/15'
-          : theme === 'dark'
-          ? 'bg-stone-900/60 border-stone-800/80 hover:border-teal-500/50 shadow-md shadow-black/30 hover:shadow-xl'
-          : 'bg-white border-stone-200/80 hover:border-teal-500/50 shadow-sm hover:shadow-lg'
-      }`}
-    >
-      {/* Visual Accent Top Bar for Achievements */}
-      {isAchievement && (
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500 z-10"></div>
-      )}
-
-      {/* Prominent Certificate / Event Image Preview Container */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-950 flex items-center justify-center">
-        <img
-          src={event.coverImage}
-          alt={`${event.title} Preview`}
-          loading="lazy"
-          className="w-full h-full object-contain filter contrast-[1.02] transition-transform duration-700 group-hover:scale-105"
-        />
-
-        {/* Inner Subtle Vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
-
-        {/* Floating Category Badge */}
-        <div className="absolute top-3.5 left-3.5 flex items-center gap-2 z-10">
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider backdrop-blur-md shadow-md ${
-              isAchievement
-                ? 'bg-black/75 text-amber-400 border border-amber-500/40'
-                : 'bg-black/75 text-teal-300 border border-teal-500/40'
-            }`}
-          >
-            {isAchievement ? (
-              <Award className="w-3.5 h-3.5 text-amber-400" />
-            ) : (
-              <Sparkles className="w-3.5 h-3.5 text-teal-300" />
-            )}
-            <span>{event.badge}</span>
-          </span>
-
-          {event.achievementRank && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-mono font-black bg-amber-500 text-stone-950 shadow-md">
-              {event.achievementRank}
-            </span>
-          )}
-        </div>
-
-        {/* Hover Inspect Indicator */}
-        <div className="absolute bottom-3 right-3 z-10 opacity-90 group-hover:opacity-100 transition-opacity">
-          <div className="px-3 py-1.5 rounded-xl bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg group-hover:bg-amber-500 group-hover:text-stone-950 group-hover:border-amber-400 transition-colors">
-            <span>Inspect</span>
-            <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </div>
-        </div>
-
-        {/* Verified Credential Tag */}
-        <div className="absolute bottom-3 left-3 z-10">
-          <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md border border-emerald-500/30">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            <span>Archived</span>
-          </span>
-        </div>
+export function ChapterCard({ event, theme, onOpen, onViewPhoto, index }: { event: ChapterEvent; theme: ThemeMode; onOpen: (event: ChapterEvent) => void; onViewPhoto: (event: ChapterEvent) => void; index: number }) {
+  const reduced = useReducedMotion();
+  const root = useRef<HTMLElement>(null);
+  const visible = useInView(root);
+  const photo = event.mediaType !== 'certificate';
+  const mediaLabel = event.mediaType === 'video' ? 'video' : event.mediaType === 'graphic' ? 'graphic' : 'photo';
+  const link = linkedinPostUrl(event.linkedinUrl);
+  return <motion.article ref={root} data-running={visible} data-theme={theme} initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 16 }}
+    whileInView={{ opacity: 1, y: 0, transition: { duration: reduced ? 0 : .5, delay: reduced ? 0 : Math.min(index, 5) * .09 } }} viewport={{ once: true, amount: .15 }}
+    transition={{ duration: reduced ? 0 : .22, ease: 'easeOut' }} whileHover={reduced ? undefined : { y: -5 }}
+    className={`chapter-card ${photo ? `chapter-card-photo ${event.category === 'achievement' ? 'chapter-card-featured' : `chapter-card-presentation ${['build-for-bengaluru-2026', 'fhe-development-2026'].includes(event.id) ? 'chapter-card-badge' : ''}`}` : ''} group rounded-3xl overflow-hidden border flex flex-col ${theme === 'dark' ? 'bg-stone-900/60 border-stone-800' : 'bg-white border-stone-200'}`}>
+    <button onClick={() => photo ? onViewPhoto(event) : onOpen(event)} aria-label={`View ${photo ? mediaLabel : 'certificate'}: ${event.title}`} className="chapter-card-preview relative aspect-[16/10] w-full overflow-hidden bg-stone-950">
+      <ChapterMedia event={event} preview />
+      <span aria-hidden="true" className="chapter-card-sweep" />
+      <span className="absolute bottom-3 right-3 flex gap-2 items-center rounded-lg px-2.5 py-2 bg-black/80 text-white text-[11px] opacity-80 group-hover:opacity-100"><Maximize2 size={13} />{photo ? `View ${mediaLabel}` : 'View certificate'}</span>
+    </button>
+    <div className="p-5 flex flex-col flex-1">
+      {event.mediaType === 'graphic' && <p className="text-[11px] text-teal-700 dark:text-teal-400 mb-2">Original portfolio graphic · not an event photograph</p>}
+      <h4 className="text-lg font-bold leading-snug tracking-tight">{event.title}</h4>
+      {photo && (event.team || event.project) && <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-3 text-amber-700 dark:text-amber-400 font-semibold">{event.team && <span>Team {event.team}</span>}{event.project && <span>Project {event.project}</span>}</div>}
+      <p className="text-[11px] font-mono text-stone-500 dark:text-stone-400 mt-2">{chapterMetadata(event) || event.year}</p>
+      <p className={`text-sm text-stone-500 dark:text-stone-400 mt-3 mb-5 ${photo ? 'leading-relaxed' : 'line-clamp-2'}`}>{event.description}</p>
+      <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-stone-500/20">
+        <button onClick={() => onOpen(event)} className="chapter-card-certificate min-h-11 px-3 rounded-xl bg-stone-100 dark:bg-stone-800 text-xs font-bold hover:bg-amber-500/15">{photo ? 'View Details' : 'View Certificate'}</button>
+        {link ? <a href={link} target="_blank" rel="noopener noreferrer" className="chapter-card-linkedin min-h-11 px-3 rounded-xl text-xs font-bold flex items-center gap-1">
+          <Linkedin size={15} className="chapter-linkedin-icon" /><span>View on LinkedIn</span><ArrowUpRight size={14} className="chapter-external-arrow" />
+        </a> : <button type="button" disabled title="The LinkedIn post URL for this record has not been added yet." className="chapter-card-linkedin chapter-linkedin-pending min-h-11 px-3 rounded-xl text-xs font-bold flex items-center gap-1">
+          <Linkedin size={15} className="chapter-linkedin-icon" /><span>LinkedIn Post Pending</span>
+        </button>}
       </div>
-
-      {/* Content Area */}
-      <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-        <div>
-          {/* Date & Location */}
-          <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 font-mono mb-2">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-amber-500" />
-              <span>{event.displayDate || `${event.year}`}</span>
-            </span>
-            {event.location && (
-              <span className="truncate max-w-[150px] flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-stone-400" />
-                <span>{event.location}</span>
-              </span>
-            )}
-          </div>
-
-          {/* Event Title */}
-          <h4
-            className={`text-lg sm:text-xl font-bold tracking-tight line-clamp-2 transition-colors ${
-              theme === 'dark'
-                ? 'text-white group-hover:text-amber-400'
-                : 'text-stone-900 group-hover:text-amber-600'
-            }`}
-          >
-            {event.title}
-          </h4>
-
-          {/* Issuer */}
-          {event.issuer && (
-            <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 font-medium line-clamp-1">
-              Issued by {event.issuer}
-            </p>
-          )}
-
-          {/* Skill Pills (if present) */}
-          {event.skills && event.skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-stone-200/60 dark:border-stone-800/60">
-              {event.skills.slice(0, 3).map((skill, sIdx) => (
-                <span
-                  key={sIdx}
-                  className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
-                >
-                  {skill}
-                </span>
-              ))}
-              {event.skills.length > 3 && (
-                <span className="text-[11px] font-mono text-stone-400 px-1 py-0.5">
-                  +{event.skills.length - 3}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Click prompt bar */}
-        <div className="mt-4 pt-3 border-t border-stone-200/60 dark:border-stone-800/60 flex items-center justify-between text-xs font-semibold">
-          <span className="text-stone-500 dark:text-stone-400 group-hover:text-amber-500 transition-colors">
-            Click to view credential details
-          </span>
-          <ArrowUpRight className="w-4 h-4 text-stone-400 group-hover:text-amber-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-        </div>
-      </div>
-    </motion.article>
-  );
+    </div>
+  </motion.article>;
 }

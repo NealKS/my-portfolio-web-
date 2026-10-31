@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useReducedMotion, useInView } from 'motion/react';
 import {
   Terminal,
   Box,
@@ -16,6 +16,7 @@ import {
 import { PORTRAIT_HERO_URL, PERSONAL_INFO } from '../data/portfolioData';
 import { ThemeMode } from '../types';
 import { MatrixRainCanvas } from './MatrixRainCanvas';
+import { PortraitNetwork, PortraitTilt } from './HeroPortraitEffects';
 
 interface HeroSectionProps {
   theme: ThemeMode;
@@ -47,22 +48,26 @@ const HERO_HIGHLIGHTS = [
 ];
 
 export function HeroSection({ theme, onScrollToAbout, onExploreProjects }: HeroSectionProps) {
+  const reduced = useReducedMotion();
+  const heroRef = useRef<HTMLElement>(null);
+  const heroVisible = useInView(heroRef);
   const [activeHighlightIndex, setActiveHighlightIndex] = useState(0);
   const [showCodeSnapshot, setShowCodeSnapshot] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
 
   // Auto-cycle through status highlights every 4 seconds
   useEffect(() => {
+    if (reduced || !heroVisible) return;
     const timer = setInterval(() => {
       setActiveHighlightIndex((prev) => (prev + 1) % HERO_HIGHLIGHTS.length);
     }, 4200);
     return () => clearInterval(timer);
-  }, []);
+  }, [reduced, heroVisible]);
 
   const developerCodeSnippet = `// Neal Kottilingal • Lead Profile
 const engineer = {
   name: "Neal Kottilingal",
-  title: "Full Stack Developer & Web3 Builder",
+  title: "Full Stack & Blockchain Developer",
   location: "Mumbai, Maharashtra, India",
   status: "🟢 Available for high-impact roles",
   dsa: "500+ LeetCode Solutions (Top 5% Global)",
@@ -84,7 +89,7 @@ const engineer = {
 
   return (
     <section
-      id="hero"
+      id="hero" ref={heroRef}
       className={`relative pt-6 sm:pt-12 pb-16 sm:pb-24 overflow-hidden transition-colors duration-300 ${
         theme === 'dark' ? 'bg-[#0A0D12]' : 'bg-[#F7F5F0]'
       }`}
@@ -100,38 +105,20 @@ const engineer = {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative flex flex-col justify-between">
-        {/* Massive Hero Headline - Top Deck ("I'M A FULL STACK") */}
-        <motion.div
-          initial={{ opacity: 0, y: -25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="w-full text-center select-none z-10"
-        >
-          <h1
-            className={`font-hero text-4xl xs:text-5xl sm:text-7xl md:text-8xl lg:text-[7.2rem] xl:text-[8.4rem] uppercase tracking-tight leading-none ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}
-          >
-            I’M A{' '}
-            <span className="relative inline-block">
-              FULL STACK
-              {/* Decorative Doodle */}
-              <svg
-                className="absolute -top-3 sm:-top-5 -right-6 sm:-right-8 w-6 sm:w-10 h-6 sm:h-10 text-amber-500 animate-pulse"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 2v4m0 12v4m-8-10H2m20 0h-4m-2.929-5.071l2.828-2.829m-11.314 0l2.829 2.829m0 8.486l-2.829 2.828m11.314 0l-2.828-2.828"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+        {/* Both identities remain visible after a single, transform-only entrance. */}
+        <div className="w-full text-center select-none z-10">
+          <h1 className={`font-hero hero-identity-heading uppercase tracking-tight leading-none ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <span className="sr-only">Full Stack / Blockchain Developer.</span>
+            <span aria-hidden="true" className="hero-identity-line">
+              <motion.span className="hero-specialization" initial={{ opacity: 0, x: reduced ? 0 : -28 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: reduced ? 0 : .7, ease: [.22, 1, .36, 1] }}>FULL STACK</motion.span>
+              <motion.span className="hero-identity-separator text-amber-500" initial={{ opacity: 0, scale: reduced ? 1 : .8 }} animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: reduced ? 0 : .4, delay: reduced ? 0 : .2 }}>/</motion.span>
+              <motion.span className="hero-specialization" initial={{ opacity: 0, x: reduced ? 0 : 28 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: reduced ? 0 : .7, ease: [.22, 1, .36, 1] }}>BLOCKCHAIN</motion.span>
             </span>
           </h1>
-        </motion.div>
+        </div>
 
         {/* Centerpiece Composition: Geometric Shape, Neal's Cutout/Framed Photo, and Layered Typography */}
         <div className="relative w-full max-w-4xl mx-auto my-3 sm:my-2 flex items-center justify-center">
@@ -152,7 +139,8 @@ const engineer = {
             }`}
           ></div>
 
-          {/* Neal Kottilingal's Portrait Image */}
+          {/* The original fade-in is kept intact inside an independent tilt layer. */}
+          <PortraitTilt>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -163,7 +151,7 @@ const engineer = {
             }`}
           >
             <img
-              alt="Neal Kottilingal - Full Stack Developer & Web3 Builder"
+              alt="Neal Kottilingal - Full Stack & Blockchain Developer"
               className="w-full h-full object-cover object-top filter contrast-[1.03] saturate-[1.05]"
               loading="eager"
               src={PORTRAIT_HERO_URL}
@@ -179,16 +167,9 @@ const engineer = {
             </div>
           </motion.div>
 
-          {/* Secondary Background Typographic Layer ("ENGINEER" outline behind photo - no duplicate text or visual clashes) */}
-          <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none z-10 opacity-60">
-            <div
-              className={`font-hero text-5xl xs:text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] tracking-tight uppercase font-black ${
-                theme === 'dark' ? 'stroke-text-dark' : 'stroke-text-light'
-              }`}
-            >
-              ENGINEER
-            </div>
-          </div>
+          </PortraitTilt>
+
+          <PortraitNetwork theme={theme} />
 
           {/* Floating Decorative Tech Badges - Left (Python & Node.js) */}
           <motion.div
@@ -276,18 +257,18 @@ const engineer = {
 
         {/* Massive Hero Headline - Bottom Deck ("DEVELOPER") - 100% Legible, Unobstructed */}
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
+          initial={{ opacity: 0, y: reduced ? 0 : 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          transition={{ duration: reduced ? 0 : 0.7, delay: reduced ? 0 : 0.2 }}
           className="w-full text-center select-none z-20 mt-1 sm:mt-2 relative"
         >
           <h2
-            className={`font-hero text-5xl xs:text-6xl sm:text-8xl md:text-9xl lg:text-[8.5rem] xl:text-[9.5rem] uppercase tracking-tighter leading-none transition-colors ${
+            className={`font-hero hero-developer-heading uppercase tracking-tighter leading-none transition-colors ${
               theme === 'dark' ? 'text-stone-100 hover:text-white' : 'text-gray-950'
             }`}
           >
             DEVELOPER
-            <span className="text-amber-500 inline-block ml-1 animate-pulse">.</span>
+            <span className="text-amber-500 inline-block ml-1">.</span>
           </h2>
         </motion.div>
 
@@ -307,7 +288,7 @@ const engineer = {
             }`}
           >
             {/* Live Availability Badge & Cycling Highlights */}
-            <div className="flex items-center gap-2.5 px-2 overflow-hidden w-full sm:w-auto">
+            <div className="flex items-center gap-2.5 px-2 overflow-hidden min-w-0 w-full sm:flex-1">
               <span className="relative flex h-3 w-3 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>

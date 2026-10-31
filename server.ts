@@ -1,4 +1,5 @@
 import express from 'express';
+import { timingSafeEqual } from 'node:crypto';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import nodemailer from 'nodemailer';
@@ -857,7 +858,16 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // View all received messages
-app.get('/api/contact/messages', (_req, res) => {
+app.get('/api/contact/messages', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const expected = process.env.CONTACT_INBOX_TOKEN;
+  if (!expected) return res.status(503).json({ success: false, error: 'Owner inbox access is not configured.' });
+  const provided = req.get('authorization')?.replace(/^Bearer /, '') ?? '';
+  const actualBytes = Buffer.from(provided);
+  const expectedBytes = Buffer.from(expected);
+  if (actualBytes.length !== expectedBytes.length || !timingSafeEqual(actualBytes, expectedBytes)) {
+    return res.status(401).json({ success: false, error: 'Owner access token required.' });
+  }
   return res.json({
     success: true,
     total: contactMessages.length,
@@ -881,7 +891,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, '127.0.0.1', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }

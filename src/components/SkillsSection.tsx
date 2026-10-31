@@ -44,13 +44,13 @@ export function SkillsSection({ theme }: SkillsSectionProps) {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Header Title with Code Compiling Stagger */}
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <CodeCompileReveal delay={0.05} tag="MODULE:LOAD" prefix="[0x10]">
+          <CodeCompileReveal delay={0.05}>
             <span className="text-teal-500 dark:text-teal-400 font-mono font-bold tracking-widest text-xs uppercase">
               // Engine & Toolbox
             </span>
           </CodeCompileReveal>
 
-          <CodeCompileReveal delay={0.15} prefix="[0x11]">
+          <CodeCompileReveal delay={0.15}>
             <h3
               className={`text-3xl sm:text-4xl font-black mt-2 tracking-tight ${
                 theme === 'dark' ? 'text-white' : 'text-stone-900'
@@ -60,7 +60,7 @@ export function SkillsSection({ theme }: SkillsSectionProps) {
             </h3>
           </CodeCompileReveal>
 
-          <CodeCompileReveal delay={0.25} prefix="[0x12]">
+          <CodeCompileReveal delay={0.25}>
             <p
               className={`text-sm mt-3 leading-relaxed ${
                 theme === 'dark' ? 'text-stone-400' : 'text-stone-600'
@@ -72,7 +72,7 @@ export function SkillsSection({ theme }: SkillsSectionProps) {
           </CodeCompileReveal>
 
           {/* Interactive Category Filter Pills */}
-          <CodeCompileReveal delay={0.35} prefix="[0x13]">
+          <CodeCompileReveal delay={0.35}>
             <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
               <motion.button
                 onClick={() => setActiveCategory('all')}

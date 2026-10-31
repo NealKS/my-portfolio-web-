@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+import { useInView } from 'motion/react';
 import { TICKER_ITEMS } from '../data/portfolioData';
 import { ThemeMode } from '../types';
 
@@ -6,8 +8,10 @@ interface TickerMarqueeProps {
 }
 
 export function TickerMarquee({ theme }: TickerMarqueeProps) {
+  const root = useRef<HTMLElement>(null);
+  const visible = useInView(root);
   return (
-    <section
+    <section ref={root}
       aria-label="Skills Marquee"
       className={`relative border-y py-4 overflow-hidden z-30 transition-colors duration-300 ${
         theme === 'dark'
@@ -15,7 +19,7 @@ export function TickerMarquee({ theme }: TickerMarqueeProps) {
           : 'bg-stone-900 border-stone-800 text-stone-200'
       }`}
     >
-      <div className="animate-ticker flex items-center text-xs sm:text-sm font-bold uppercase tracking-widest select-none">
+      <div style={{ animationPlayState: visible ? 'running' : 'paused' }} className="animate-ticker flex items-center text-xs sm:text-sm font-bold uppercase tracking-widest select-none">
         {/* Strip 1 */}
         <div className="flex items-center space-x-8 shrink-0 px-4">
           {TICKER_ITEMS.map((item, index) => (
@@ -29,7 +33,7 @@ export function TickerMarquee({ theme }: TickerMarqueeProps) {
         </div>
 
         {/* Strip 2 (Duplicates for continuous loop) */}
-        <div className="flex items-center space-x-8 shrink-0 px-4">
+        <div aria-hidden="true" className="flex items-center space-x-8 shrink-0 px-4">
           {TICKER_ITEMS.map((item, index) => (
             <span key={`ticker-2-${index}`} className="flex items-center space-x-8">
               <span className="hover:text-amber-400 transition-colors cursor-default whitespace-nowrap">

@@ -1,0 +1,40 @@
+/* Scoped to the Hero portrait; its original entrance and frame styles stay untouched. */
+.portrait-depth-stage { position: relative; z-index: 20; flex-shrink: 0; perspective: 1200px; }
+.portrait-tilt-layer { transform-style: preserve-3d; }
+.portrait-network {
+  position: absolute; inset: 0; z-index: 10; pointer-events: none; overflow: hidden;
+  --network-line: #0f766e; --network-line-opacity: .38; --network-node: #0d9488;
+  --network-accent: #b45309; --network-pulse: #0f766e; --network-glow: transparent;
+}
+.portrait-network[data-theme="dark"] {
+  --network-line: #5eead4; --network-line-opacity: .24; --network-node: #5eead4;
+  --network-accent: #fbbf24; --network-pulse: #99f6e4; --network-glow: #2dd4bf70;
+}
+.portrait-network svg { width: 100%; height: 100%; display: block; }
+.portrait-network-lines { fill: none; stroke: var(--network-line); stroke-width: 1; stroke-opacity: var(--network-line-opacity); }
+.portrait-network-node { fill: var(--network-node); filter: drop-shadow(0 0 3px var(--network-glow)); }
+.portrait-network-accent { fill: var(--network-accent); }
+.portrait-network-ring { fill: none; stroke: var(--network-node); stroke-width: 1; opacity: .3; }
+.portrait-network-pulse {
+  fill: none; stroke: var(--network-pulse); stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 3 100; stroke-dashoffset: 3; opacity: 0;
+  animation: portrait-network-travel 12s linear infinite;
+}
+.portrait-network[data-running="false"] .portrait-network-pulse { animation-play-state: paused; }
+@keyframes portrait-network-travel {
+  0%, 5% { stroke-dashoffset: 3; opacity: 0; }
+  9% { opacity: .85; }
+  35% { opacity: .85; }
+  40%, 100% { stroke-dashoffset: -100; opacity: 0; }
+}
+.portrait-network .portrait-network-mobile { display: none; }
+@media (max-width: 767px) {
+  .portrait-network { inset-inline: -12px; }
+  .portrait-network .portrait-network-desktop { display: none; }
+  .portrait-network-pulse { animation: none; }
+  .portrait-network .portrait-network-mobile { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portrait-network-pulse { display: none; animation: none; }
+  .portrait-tilt-layer { transform: none !important; }
+}

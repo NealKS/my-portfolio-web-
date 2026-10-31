@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { TickerMarquee } from './components/TickerMarquee';
@@ -9,19 +9,21 @@ import { GitHubSection } from './components/GitHubSection';
 import { ProjectsSection } from './components/ProjectsSection';
 import { ChaptersSection } from './components/ChaptersSection';
 import { ContactSection } from './components/ContactSection';
-import { ProjectModal } from './components/ProjectModal';
-import { ResumeModal } from './components/ResumeModal';
+const ProjectModal = lazy(() => import('./components/ProjectModal').then(m => ({ default: m.ProjectModal })));
+const ResumeModal = lazy(() => import('./components/ResumeModal').then(m => ({ default: m.ResumeModal })));
 import { ScrollProgress } from './components/ScrollProgress';
 import { CircuitTrace } from './components/CircuitTrace';
 import { ScreenView, ThemeMode, ProjectItem } from './types';
+import { NAV_ITEMS } from './data/navigation';
+import { usePortfolioNavigation } from './hooks/usePortfolioNavigation';
 import { ArrowLeft, ArrowRight, Layers, LayoutGrid } from 'lucide-react';
 
 export default function App() {
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('nk_theme');
-    return saved === 'dark' ? 'dark' : 'light';
+    return saved === 'light' ? 'light' : 'dark';
   });
-  const [activeScreen, setActiveScreen] = useState<ScreenView>('all');
+  const { activeScreen, activeSection, navigate, selectScreen: setActiveScreen } = usePortfolioNavigation();
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
@@ -38,48 +40,14 @@ export default function App() {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  const scrollToAbout = () => {
-    if (activeScreen !== 'all') {
-      setActiveScreen('about');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    const aboutEl = document.getElementById('about');
-    if (aboutEl) {
-      aboutEl.scrollIntoView({ behavior: 'smooth' });
-    }
+  const scrollToAbout = () => navigate('about');
+  const scrollToProjects = () => navigate('projects');
+  const scrollToTop = () => navigate('hero');
+  const handleNavClick = (id: string) => {
+    const item = NAV_ITEMS.find(item => item.screen === id);
+    if (item) navigate(item.screen);
   };
-
-  const scrollToProjects = () => {
-    if (activeScreen !== 'all') {
-      setActiveScreen('projects');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    const projectsEl = document.getElementById('projects');
-    if (projectsEl) {
-      projectsEl.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleNavClick = (sectionId: string) => {
-    if (activeScreen === 'all') {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      setActiveScreen(sectionId as ScreenView);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  // Screen order for next/prev screen navigation in single screen mode
-  const screensList: ScreenView[] = ['hero', 'about', 'skills', 'leetcode', 'github', 'projects', 'chapters', 'contact'];
+  const screensList: ScreenView[] = NAV_ITEMS.map(item => item.screen);
   const currentScreenIndex = screensList.indexOf(activeScreen);
 
   return (
@@ -99,6 +67,8 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         activeScreen={activeScreen}
+        activeSection={activeSection}
+        onNavigate={navigate}
         onSelectScreen={setActiveScreen}
         onOpenResume={() => setIsResumeOpen(true)}
       />
@@ -106,7 +76,7 @@ export default function App() {
       {/* Screen Mode Indicator / Breadcrumb when in Single Screen View */}
       {activeScreen !== 'all' && (
         <div
-          className={`sticky top-20 z-40 px-6 py-2.5 border-b backdrop-blur-md flex items-center justify-between text-xs font-semibold ${
+          className={`sticky top-20 z-40 px-3 sm:px-6 py-2.5 border-b backdrop-blur-md flex items-center justify-between text-xs font-semibold ${
             theme === 'dark'
               ? 'bg-stone-950/80 border-stone-800 text-stone-300'
               : 'bg-stone-100/90 border-stone-200 text-stone-700'
@@ -114,7 +84,7 @@ export default function App() {
         >
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span className="uppercase tracking-wider font-mono text-[11px] text-amber-500 font-bold">
+            <span className="hidden sm:inline uppercase tracking-wider font-mono text-[11px] text-amber-500 font-bold">
               Screen View:
             </span>
             <span className="capitalize font-bold text-stone-900 dark:text-white">
@@ -139,11 +109,9 @@ export default function App() {
           <div className="flex items-center gap-2">
             {currentScreenIndex > 0 && (
               <button
-                onClick={() => {
-                  setActiveScreen(screensList[currentScreenIndex - 1]);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="px-2.5 py-1 rounded border border-stone-300 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-800 flex items-center gap-1 transition-colors"
+                aria-label="Previous screen"
+                onClick={() => navigate(screensList[currentScreenIndex - 1])}
+                className="min-h-11 min-w-11 px-2.5 py-1 rounded border border-stone-300 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-800 flex items-center gap-1 transition-colors"
               >
                 <ArrowLeft className="w-3 h-3" />
                 <span className="hidden sm:inline">Previous</span>
@@ -152,11 +120,9 @@ export default function App() {
 
             {currentScreenIndex < screensList.length - 1 && (
               <button
-                onClick={() => {
-                  setActiveScreen(screensList[currentScreenIndex + 1]);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="px-2.5 py-1 rounded bg-amber-500 text-stone-950 font-bold hover:bg-amber-400 flex items-center gap-1 transition-colors"
+                aria-label="Next screen"
+                onClick={() => navigate(screensList[currentScreenIndex + 1])}
+                className="min-h-11 min-w-11 px-2.5 py-1 rounded bg-amber-500 text-stone-950 font-bold hover:bg-amber-400 flex items-center gap-1 transition-colors"
               >
                 <span className="hidden sm:inline">Next</span>
                 <ArrowRight className="w-3 h-3" />
@@ -165,7 +131,7 @@ export default function App() {
 
             <button
               onClick={() => setActiveScreen('all')}
-              className="ml-2 px-2.5 py-1 rounded text-stone-500 hover:text-stone-900 dark:hover:text-white flex items-center gap-1"
+              aria-label="Return to Full Feed" className="ml-1 min-h-11 min-w-11 px-2.5 py-1 rounded text-stone-500 hover:text-stone-900 dark:hover:text-white flex items-center gap-1"
               title="Return to full continuous scroll"
             >
               <Layers className="w-3.5 h-3.5" />
@@ -214,14 +180,8 @@ export default function App() {
               <>
                 <HeroSection
                   theme={theme}
-                  onScrollToAbout={() => {
-                    setActiveScreen('about');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  onExploreProjects={() => {
-                    setActiveScreen('projects');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onScrollToAbout={() => navigate('about')}
+                  onExploreProjects={() => navigate('projects')}
                 />
                 <TickerMarquee theme={theme} />
               </>
@@ -230,14 +190,8 @@ export default function App() {
             {activeScreen === 'about' && (
               <AboutSection
                 theme={theme}
-                onExploreProjects={() => {
-                  setActiveScreen('projects');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onContactClick={() => {
-                  setActiveScreen('contact');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onExploreProjects={() => navigate('projects')}
+                onContactClick={() => navigate('contact')}
               />
             )}
 
@@ -260,20 +214,14 @@ export default function App() {
               <ProjectsSection
                 theme={theme}
                 onOpenCaseStudy={(proj) => setSelectedProject(proj)}
-                onContactClick={() => {
-                  setActiveScreen('contact');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onContactClick={() => navigate('contact')}
               />
             )}
 
             {activeScreen === 'chapters' && (
               <ChaptersSection
                 theme={theme}
-                onContactClick={() => {
-                  setActiveScreen('contact');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onContactClick={() => navigate('contact')}
               />
             )}
 
@@ -281,29 +229,28 @@ export default function App() {
               <ContactSection
                 theme={theme}
                 onScrollToTop={scrollToTop}
-                onNavClick={(id) => {
-                  setActiveScreen(id as ScreenView);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onNavClick={handleNavClick}
               />
             )}
           </div>
         )}
       </main>
 
+      <Suspense fallback={<span role="status" className="fixed bottom-4 left-4 z-50 rounded-xl bg-stone-900 text-white px-4 py-2">Loading document…</span>}>
       {/* Case Study Modal */}
-      <ProjectModal
+      {selectedProject && <ProjectModal
         project={selectedProject}
         theme={theme}
         onClose={() => setSelectedProject(null)}
-      />
+      />}
 
       {/* Resume / CV Modal */}
-      <ResumeModal
+      {isResumeOpen && <ResumeModal
         isOpen={isResumeOpen}
         theme={theme}
         onClose={() => setIsResumeOpen(false)}
-      />
+      />}
+      </Suspense>
     </div>
   );
 }

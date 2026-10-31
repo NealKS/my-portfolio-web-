@@ -1,3 +1,4 @@
+import { useSectionActivity } from '../hooks/useSectionActivity';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -208,6 +209,9 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
   });
   const [loading, setLoading] = useState<boolean>(!data);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const sectionActive = useSectionActivity('leetcode');
+  const lastSyncAt = useRef(Date.now());
+  const requestActive = useRef(false);
   const [secondsSinceLastSync, setSecondsSinceLastSync] = useState<number>(0);
   const [newSolveNotification, setNewSolveNotification] = useState<{
     title: string;
@@ -225,6 +229,8 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
   const [activeTab, setActiveTab] = useState<'recent' | 'languages' | 'skills'>('recent');
 
   const fetchLeetCodeData = async (forceRefresh = false) => {
+    if (requestActive.current) return;
+    requestActive.current = true;
     if (forceRefresh) setRefreshing(true);
     try {
       let resolvedData: LeetCodeProfileData | null = null;
@@ -266,7 +272,8 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
         }
         prevTotalSolvedRef.current = resolvedData.totalSolved;
         setData(resolvedData);
-        setSecondsSinceLastSync(0);
+        lastSyncAt.current = Date.now();
+          setSecondsSinceLastSync(0);
 
         try {
           localStorage.setItem('leetcode_profile_cache_v3', JSON.stringify(resolvedData));
@@ -277,6 +284,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
     } catch (err) {
       console.error('Failed to load LeetCode data:', err);
     } finally {
+      requestActive.current = false;
       setLoading(false);
       setRefreshing(false);
     }
@@ -288,17 +296,17 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
 
     // 2. Continuous real-time polling every 5 seconds for immediate automatic updates
     const pollInterval = setInterval(() => {
-      fetchLeetCodeData(false);
+      if (sectionActive.current) fetchLeetCodeData(false);
     }, 5000);
 
     // 3. Increment seconds timer every second for transparency
     const timerInterval = setInterval(() => {
-      setSecondsSinceLastSync((prev) => prev + 1);
+      if (sectionActive.current) setSecondsSinceLastSync(Math.floor((Date.now() - lastSyncAt.current) / 1000));
     }, 1000);
 
     // 4. INSTANT SYNC: When user solves on LeetCode and switches back to this tab
     const handleFocusOrVisibility = () => {
-      if (document.visibilityState === 'visible') {
+      if (sectionActive.current) {
         fetchLeetCodeData(true);
       }
     };
@@ -410,8 +418,8 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
         {/* Section Header */}
-        <CodeCompileReveal delay={0.05} tag="TELEMETRY:LEETCODE" prefix="[0x24]">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+        <CodeCompileReveal delay={0.05}>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-6">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-amber-500/10 text-amber-500 border border-amber-500/20">
@@ -448,7 +456,7 @@ export function LeetCodeSection({ theme }: LeetCodeSectionProps) {
             </div>
 
             {/* Live Sync Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+            <div className="flex flex-col items-start gap-3 shrink-0">
               <div className="text-[11px] font-mono text-stone-400">
                 <span>Auto-polls every 5s • Checked {secondsSinceLastSync === 0 ? 'just now' : `${secondsSinceLastSync}s ago`}</span>
               </div>

@@ -59,6 +59,8 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
   // Stored notes drawer for Neal to check all incoming inquiries
   const [showNotesDrawer, setShowNotesDrawer] = useState(false);
   const [storedNotes, setStoredNotes] = useState<StoredNote[]>([]);
+  const [inboxToken, setInboxToken] = useState('');
+  const [inboxError, setInboxError] = useState('');
   const [loadingNotes, setLoadingNotes] = useState(false);
 
   const copyEmailToClipboard = () => {
@@ -78,23 +80,24 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
 
   const fetchStoredNotes = async () => {
     setLoadingNotes(true);
+    setInboxError('');
     try {
-      const res = await fetch('/api/contact/messages');
+      const res = await fetch('/api/contact/messages', { headers: { Authorization: `Bearer ${inboxToken}` } });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Unable to access inbox.');
       if (data && data.messages) {
         setStoredNotes(data.messages);
       }
     } catch (err) {
-      console.error('Failed to load notes:', err);
+      setStoredNotes([]);
+      setInboxError(err instanceof Error ? err.message : 'Unable to access inbox.');
     } finally {
       setLoadingNotes(false);
     }
   };
 
   useEffect(() => {
-    if (showNotesDrawer) {
-      fetchStoredNotes();
-    }
+    if (!showNotesDrawer) { setInboxToken(''); setStoredNotes([]); setInboxError(''); }
   }, [showNotesDrawer]);
 
   const handleSendMessage = async (e: FormEvent) => {
@@ -155,7 +158,7 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
     >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Top Pitch Banner */}
-        <CodeCompileReveal delay={0.05} tag="SOCKET:CONNECT" prefix="[0x30]">
+        <CodeCompileReveal delay={0.05}>
           <div className="bg-gradient-to-r from-stone-900 via-[#131922] to-stone-900 border border-stone-800 rounded-3xl p-8 sm:p-12 mb-16 shadow-2xl relative overflow-hidden">
             <div className="relative z-10 max-w-2xl">
               <span className="text-teal-400 font-mono text-xs uppercase tracking-widest font-bold">
@@ -332,7 +335,7 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <input
                         type="text"
-                        placeholder="Your Name"
+                        aria-label="Your name" autoComplete="name" placeholder="Your Name"
                         required
                         value={formData.name}
                         disabled={submitting}
@@ -341,7 +344,7 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                       />
                       <input
                         type="email"
-                        placeholder="Your Email Address"
+                        aria-label="Your email address" autoComplete="email" placeholder="Your Email Address"
                         required
                         value={formData.email}
                         disabled={submitting}
@@ -350,7 +353,7 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                       />
                     </div>
                     <textarea
-                      placeholder="Brief details about your project, team opportunity, or inquiry..."
+                      aria-label="Your message" placeholder="Brief details about your project, team opportunity, or inquiry..."
                       rows={3}
                       required
                       value={formData.message}
@@ -358,7 +361,7 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-lg bg-stone-950 border border-stone-700 text-white text-xs placeholder:text-stone-500 focus:outline-none focus:border-amber-500 resize-none"
                     ></textarea>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
                       <motion.button
                         type="submit"
                         disabled={submitting}
@@ -403,7 +406,7 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                       <RefreshCw className={`w-3.5 h-3.5 ${loadingNotes ? 'animate-spin' : ''}`} />
                     </button>
                     <button
-                      onClick={() => setShowNotesDrawer(false)}
+                      aria-label="Close inbox" onClick={() => setShowNotesDrawer(false)}
                       className="text-stone-400 hover:text-white p-1 rounded transition-colors"
                     >
                       <X className="w-4 h-4" />
@@ -411,6 +414,12 @@ export function ContactSection({ theme, onScrollToTop, onNavClick }: ContactSect
                   </div>
                 </div>
 
+                <form onSubmit={e => { e.preventDefault(); void fetchStoredNotes(); }} className="flex flex-wrap gap-2 mb-4">
+                  <label className="text-xs text-stone-400 w-full" htmlFor="inbox-token">Owner-only inbox</label>
+                  <input id="inbox-token" type="password" autoComplete="off" required value={inboxToken} onChange={e => setInboxToken(e.target.value)} placeholder="Owner access token" className="min-w-0 flex-1 min-h-11 px-3 rounded-lg bg-stone-950 border border-stone-700 text-white" />
+                  <button type="submit" disabled={loadingNotes} className="min-h-11 px-4 rounded-lg bg-amber-500 text-stone-950 font-semibold text-xs">Unlock inbox</button>
+                </form>
+                {inboxError && <p role="alert" className="mb-3 text-sm text-rose-300">{inboxError}</p>}
                 {loadingNotes ? (
                   <div className="p-6 text-center text-xs font-mono text-stone-500">
                     Loading recorded notes...

@@ -6,18 +6,30 @@ export interface ChapterEvent {
   id: string;
   title: string;
   year: number;
-  date: string;
-  displayDate?: string;
+  date?: string;
+  endDate?: string;
+  duration?: string;
+  city?: string;
   category: 'achievement' | 'experience';
   badge: string;
-  achievementRank?: string;
-  issuer?: string;
-  location?: string;
+  description: string;
   coverImage: string;
-  images: string[];
+  certificateImages: string[];
   linkedinUrl?: string;
-  skills?: string[];
-  highlights?: string[];
+  mediaType?: 'certificate' | 'photo' | 'video' | 'graphic';
+  videoUrl?: string;
+  imageAlt?: string;
+  previewPosition?: string;
+  team?: string;
+  project?: string;
+  eventName?: string;
+  organizer?: string;
+  recognition?: string;
+  teamMembers?: string[];
+  detailTitle?: string;
+  detailParagraphs?: string[];
+  technologies?: string[];
+  localTestResult?: string;
 }
 
 export interface LeetCodeSubmission {
@@ -89,6 +101,7 @@ export interface GitHubProfileData {
   totalStars: number;
   totalForks: number;
   pullRequests: number;
+  activeDays?: number;
   currentStreak: number;
   maxStreak: number;
   topLanguages: { name: string; percentage: number; color: string }[];
@@ -128,4 +141,3 @@ export interface StatMetric {
   value: string;
   label: string;
 }
-

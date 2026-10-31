@@ -1,0 +1,92 @@
+/* Scoped to certificate cards in both Chapters categories. */
+.chapter-card { transition: border-color 220ms ease, box-shadow 220ms ease; }
+.chapter-card:focus-within { border-color: rgb(245 158 11 / .75); }
+.chapter-card-preview:focus-visible { outline-offset: -4px; }
+.chapter-card-preview img { transition: transform 500ms cubic-bezier(.22, 1, .36, 1); }
+.chapter-card-sweep {
+  position: absolute; inset-block: 0; left: 0; width: 45%; pointer-events: none;
+  background: linear-gradient(110deg, transparent, rgb(255 255 255 / .2), transparent);
+  opacity: 0; transform: translateX(-140%) skewX(-15deg);
+}
+.chapter-card-certificate { transition: background-color 180ms ease, color 180ms ease; }
+.chapter-card-linkedin {
+  color: #0a66c2; background-color: rgb(10 102 194 / .07);
+  box-shadow: inset 0 0 0 1px rgb(10 102 194 / .28);
+  transition: color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+.chapter-card-linkedin .chapter-linkedin-icon { color: #0a66c2; flex-shrink: 0; }
+.chapter-card-linkedin:not(:disabled):is(:hover, :focus-visible) { background-color: rgb(10 102 194 / .14); box-shadow: inset 0 0 0 1px rgb(10 102 194 / .55); }
+:is(.chapter-card, .chapter-media-detail)[data-theme="dark"] .chapter-card-linkedin { color: #70b5f9; background-color: rgb(10 102 194 / .12); }
+:is(.chapter-card, .chapter-media-detail)[data-theme="dark"] .chapter-card-linkedin:not(:disabled):is(:hover, :focus-visible) { background-color: rgb(10 102 194 / .22); }
+.chapter-external-arrow { flex-shrink: 0; transition: transform 180ms ease; }
+.chapter-card-linkedin:not(:disabled):is(:hover, :focus-visible) .chapter-external-arrow { transform: translate(2px, -2px); }
+@media (hover: hover) and (pointer: fine) {
+  .chapter-card:hover { border-color: rgb(245 158 11 / .75); box-shadow: 0 14px 32px -16px rgb(28 25 23 / .24); }
+  .chapter-card[data-theme="dark"]:hover { box-shadow: 0 14px 32px -16px rgb(0 0 0 / .6); }
+  .chapter-card:hover .chapter-card-preview img { transform: scale(1.02); }
+  .chapter-card:hover .chapter-card-sweep { animation: chapter-certificate-sweep 850ms ease-out 1 both; }
+}
+@keyframes chapter-certificate-sweep {
+  0% { opacity: 0; transform: translateX(-140%) skewX(-15deg); }
+  20%, 65% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(350%) skewX(-15deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chapter-card, .chapter-card-preview img, .chapter-card-linkedin, .chapter-card-certificate, .chapter-external-arrow { transition: none; }
+  .chapter-card, .chapter-card-preview img, .chapter-external-arrow { transform: none !important; }
+  .chapter-card-sweep { display: none; animation: none !important; }
+}
+
+.chapter-card-linkedin.chapter-linkedin-pending {
+  cursor: not-allowed;
+  border: 0;
+  box-shadow: inset 0 0 0 1px rgb(10 102 194 / .22);
+}
+
+/* One genuine photo milestone: a balanced feature instead of an empty grid column. */
+.chapter-card-photo .chapter-card-preview { aspect-ratio: 4 / 3; }
+.chapter-card-photo .chapter-card-preview img { position: absolute; inset: 0; object-fit: cover; object-position: center 70%; }
+@media (min-width: 768px) {
+  .chapter-card-featured { display: grid; grid-template-columns: .95fr 1.05fr; }
+  .chapter-card-featured .chapter-card-preview { aspect-ratio: auto; height: 100%; min-height: 380px; }
+  .chapter-card-featured > div { padding: 28px; }
+}
+
+/* Center the unaltered presentation photo so the presenter and screen stay visible. */
+.chapter-card-presentation .chapter-card-preview { aspect-ratio: 16 / 10; }
+.chapter-card-presentation .chapter-card-preview img { object-position: center; }
+.chapter-card-presentation .chapter-linkedin-icon { transition: transform 180ms ease; }
+.chapter-card-presentation .chapter-card-linkedin:is(:hover, :focus-visible) .chapter-linkedin-icon { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) {
+  .chapter-card-presentation .chapter-linkedin-icon { transition: none; transform: none !important; }
+}
+/* Keep the entire participant badge readable within the existing preview dimensions. */
+.chapter-card-badge .chapter-card-preview img { object-fit: contain; }
+
+.chapter-video { position: relative; width: 100%; height: 100%; background: #080e14; }
+.chapter-video video { display: block; width: 100%; height: 100%; object-fit: contain; }
+.chapter-video-scan { position: absolute; inset: 0; pointer-events: none; border: 1px solid rgb(245 158 11 / .35); }
+.chapter-video-scan::after { content: ''; position: absolute; left: 0; top: 0; width: 30%; height: 1px; background: #2dd4bf; animation: chapter-video-trace 5s ease-in-out infinite alternate; }
+@keyframes chapter-video-trace { to { transform: translateX(230%); } }
+.chapter-original-graphic { display: block; width: 100%; height: 100%; }
+.chapter-graphic-node { animation: chapter-graphic-pulse 4s ease-in-out infinite alternate; }
+@keyframes chapter-graphic-pulse { to { opacity: .35; } }
+.chapter-detail-media { width: min(100%, 848px); }
+.chapter-detail-media img, .chapter-detail-media video, .chapter-detail-media svg { max-height: 55dvh; }
+.chapter-detail-media .chapter-video { height: auto; }
+.chapter-lightbox-media > img { max-height: calc(100dvh - 6rem); }
+.chapter-lightbox-media .chapter-video { width: min(860px, calc(100vw - 3rem)); height: auto; }
+.chapter-lightbox-media video { max-height: calc(100dvh - 6rem); }
+.chapter-lightbox-media > svg { width: min(1000px, calc(100vw - 3rem)); max-height: calc(100dvh - 6rem); }
+@media (hover: hover) and (pointer: fine) {
+  .chapter-card-preview video, .chapter-card-preview svg { transition: transform 500ms ease; }
+  .chapter-card:hover .chapter-card-preview video, .chapter-card:hover .chapter-card-preview svg { transform: scale(1.02); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chapter-video-scan::after, .chapter-graphic-node { animation: none; }
+  .chapter-card-preview video, .chapter-card-preview svg { transition: none; transform: none !important; }
+}
+.chapter-receipts-link { background-image: linear-gradient(currentColor,currentColor); background-position: 0 100%; background-repeat: no-repeat; background-size: 100% 1px; padding-bottom: 2px; transition: background-size 180ms ease; }
+.chapter-receipts-link:hover, .chapter-receipts-link:focus-visible { background-size: 100% 2px; }
+.chapter-card[data-running="false"] .chapter-video-scan::after,
+.chapter-card[data-running="false"] .chapter-graphic-node { animation-play-state: paused; }

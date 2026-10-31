@@ -1,0 +1,18 @@
+/* Only the drawer's social links use brand treatments; the CV is untouched. */
+.drawer-social-link { transition: color 180ms ease, background-color 180ms ease; }
+.drawer-social-link svg { transition: color 180ms ease, filter 180ms ease; flex-shrink: 0; }
+.drawer-social-github svg { color: #181717; }
+.drawer-social-github:is(:hover, :focus-visible) { color: #181717; background-color: rgb(24 23 23 / .06); }
+.drawer-social-linkedin svg { color: #0a66c2; }
+.drawer-social-linkedin:is(:hover, :focus-visible) { color: #0a66c2; background-color: rgb(10 102 194 / .08); }
+.drawer-social-linkedin:is(:hover, :focus-visible) svg { color: #004182; }
+.drawer-social-instagram:is(:hover, :focus-visible) { color: #9d174d; background-color: rgb(193 53 132 / .08); }
+.drawer-social-instagram:is(:hover, :focus-visible) svg { filter: drop-shadow(0 0 2px rgb(193 53 132 / .25)); }
+.drawer-socials[data-theme="dark"] .drawer-social-github svg { color: #f5f5f4; }
+.drawer-socials[data-theme="dark"] .drawer-social-github:is(:hover, :focus-visible) { color: #fff; background-color: rgb(255 255 255 / .07); }
+.drawer-socials[data-theme="dark"] .drawer-social-linkedin:is(:hover, :focus-visible) { color: #70b5f9; background-color: rgb(10 102 194 / .14); }
+.drawer-socials[data-theme="dark"] .drawer-social-linkedin:is(:hover, :focus-visible) svg { color: #70b5f9; }
+.drawer-socials[data-theme="dark"] .drawer-social-instagram:is(:hover, :focus-visible) { color: #f9a8d4; background-color: rgb(193 53 132 / .14); }
+@media (prefers-reduced-motion: reduce) {
+  .drawer-social-link, .drawer-social-link svg { transition: none; }
+}

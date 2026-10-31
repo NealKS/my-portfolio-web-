@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useReducedMotion, useInView } from 'motion/react';
 import { ThemeMode } from '../types';
 
 interface MatrixRainCanvasProps {
@@ -6,9 +7,18 @@ interface MatrixRainCanvasProps {
 }
 
 export function MatrixRainCanvas({ theme }: MatrixRainCanvasProps) {
+  const reduced = useReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const visible = useInView(canvasRef);
+  const [foreground, setForeground] = useState(!document.hidden);
   useEffect(() => {
+    const sync = () => setForeground(!document.hidden);
+    document.addEventListener('visibilitychange', sync);
+    return () => document.removeEventListener('visibilitychange', sync);
+  }, []);
+  useEffect(() => {
+    if (reduced || !visible || !foreground) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -92,7 +102,7 @@ export function MatrixRainCanvas({ theme }: MatrixRainCanvasProps) {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [theme]);
+  }, [theme, reduced, visible, foreground]);
 
   return (
     <canvas

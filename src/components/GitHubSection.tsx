@@ -1,3 +1,4 @@
+import { useSectionActivity } from '../hooks/useSectionActivity';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -210,6 +211,9 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
 
   const [loading, setLoading] = useState<boolean>(!data);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const sectionActive = useSectionActivity('github');
+  const lastSyncAt = useRef(Date.now());
+  const requestActive = useRef(false);
   const [secondsSinceLastSync, setSecondsSinceLastSync] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'repositories' | 'activity' | 'languages' | 'velocity'>('repositories');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -227,6 +231,8 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
   const [newCommitAlert, setNewCommitAlert] = useState<string | null>(null);
 
   const fetchGitHubData = async (forceRefresh = false) => {
+    if (requestActive.current) return;
+    requestActive.current = true;
     if (forceRefresh) setRefreshing(true);
     try {
       const url = forceRefresh ? '/api/github?refresh=true' : '/api/github';
@@ -244,6 +250,7 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
           }
           prevCommitsRef.current = resolved.totalCommitsYear;
           setData(resolved);
+          lastSyncAt.current = Date.now();
           setSecondsSinceLastSync(0);
           try {
             localStorage.setItem('github_profile_cache_v1', JSON.stringify(resolved));
@@ -255,6 +262,7 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
     } catch (err) {
       console.warn('Failed to fetch GitHub data:', err);
     } finally {
+      requestActive.current = false;
       setLoading(false);
       setRefreshing(false);
     }
@@ -264,15 +272,15 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
     fetchGitHubData(true);
 
     const pollInterval = setInterval(() => {
-      fetchGitHubData(false);
+      if (sectionActive.current) fetchGitHubData(false);
     }, 6000);
 
     const timerInterval = setInterval(() => {
-      setSecondsSinceLastSync((prev) => prev + 1);
+      if (sectionActive.current) setSecondsSinceLastSync(Math.floor((Date.now() - lastSyncAt.current) / 1000));
     }, 1000);
 
     const handleFocus = () => {
-      if (document.visibilityState === 'visible') {
+      if (sectionActive.current) {
         fetchGitHubData(true);
       }
     };
@@ -327,10 +335,16 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
     return weeks;
   }, [data?.commitCalendar]);
 
-  const handleCopyClone = (repoName: string, cloneUrl: string) => {
-    navigator.clipboard.writeText(`git clone ${cloneUrl}.git`);
-    setCopiedRepo(repoName);
-    setTimeout(() => setCopiedRepo(null), 2500);
+  const isRepositoryUrl = (url: string) => /^https:\/\/github\.com\/[^/]+\/[^/?#]+\/?$/.test(url);
+  const handleCopyClone = async (repoName: string, cloneUrl: string) => {
+    if (!isRepositoryUrl(cloneUrl)) return;
+    try {
+      await navigator.clipboard.writeText(`git clone ${cloneUrl.replace(/\/$/, '').replace(/\.git$/, '')}.git`);
+      setCopiedRepo(repoName);
+      setTimeout(() => setCopiedRepo(null), 2500);
+    } catch {
+      setCopiedRepo(null);
+    }
   };
 
   const filteredRepos = useMemo(() => {
@@ -386,7 +400,7 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex items-center gap-2 font-mono text-xs text-emerald-600 dark:text-emerald-400 font-bold tracking-widest uppercase">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>[0x05] REPOSITORY_TELEMETRY // CODE_CADENCE // GIT_ENGINE: ACTIVE</span>
+              <span>Repositories & Activity</span>
             </div>
 
             {/* Live Auto-Sync Status & Refresh Button */}
@@ -739,7 +753,7 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
 
         {/* Tabbed Interactive Control Panel */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-stone-200 dark:border-stone-800 pb-4">
-          <div className="flex items-center gap-2 p-1 rounded-xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800">
+          <div className="flex flex-wrap items-center gap-2 p-1 rounded-xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800">
             <button
               onClick={() => setActiveTab('repositories')}
               className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -921,7 +935,7 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
                     </div>
 
                     {/* Clone Snippet Copy Button */}
-                    <button
+                    {isRepositoryUrl(repo.htmlUrl) && <button
                       onClick={() => handleCopyClone(repo.name, repo.htmlUrl)}
                       className="p-1 rounded hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-400 hover:text-emerald-400 transition-colors"
                       title="Copy clone command"
@@ -931,7 +945,7 @@ export function GitHubSection({ theme }: GitHubSectionProps) {
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}
-                    </button>
+                    </button>}
                   </div>
                 </motion.div>
               ))}

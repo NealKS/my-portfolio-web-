@@ -1,45 +1,30 @@
 import React, { ReactNode } from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 
 interface CodeCompileRevealProps {
   children: ReactNode;
   delay?: number;
   className?: string;
-  prefix?: string;
-  tag?: string;
 }
 
 export function CodeCompileReveal({
   children,
   delay = 0,
   className = '',
-  prefix,
-  tag,
 }: CodeCompileRevealProps) {
+  const reduced = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      initial={{ opacity: 0, y: reduced ? 0 : 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{
-        duration: 0.5,
-        delay,
+        duration: reduced ? 0 : 0.5,
+        delay: reduced ? 0 : delay,
         ease: [0.25, 0.1, 0.25, 1],
       }}
       className={`relative group/compile ${className}`}
     >
-      {/* Optional terminal line prefix cue e.g. [0x01] or > */}
-      {(prefix || tag) && (
-        <div className="flex items-center gap-2 mb-1 select-none font-mono text-[10px] tracking-wider text-teal-500/70 dark:text-teal-400/60 uppercase">
-          {tag && (
-            <span className="px-1.5 py-0.5 rounded bg-teal-500/10 border border-teal-500/20 text-teal-400 font-semibold">
-              {tag}
-            </span>
-          )}
-          {prefix && <span className="opacity-75">{prefix}</span>}
-        </div>
-      )}
-
       {children}
     </motion.div>
   );
@@ -58,6 +43,7 @@ export function StaggerCompileContainer({
   className?: string;
   key?: React.Key;
 }) {
+  const reduced = useReducedMotion();
   return (
     <motion.div
       initial="hidden"
@@ -67,7 +53,7 @@ export function StaggerCompileContainer({
         hidden: {},
         visible: {
           transition: {
-            staggerChildren: 0.12,
+            staggerChildren: reduced ? 0 : 0.12,
           },
         },
       }}
@@ -86,15 +72,16 @@ export function StaggerCompileItem({
   className?: string;
   key?: React.Key;
 }) {
+  const reduced = useReducedMotion();
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20, filter: 'blur(4px)' },
+        hidden: { opacity: 0, y: reduced ? 0 : 20, filter: 'none' },
         visible: {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
-          transition: { duration: 0.45, ease: 'easeOut' },
+          filter: 'none',
+          transition: { duration: reduced ? 0 : 0.45, ease: 'easeOut' },
         },
       }}
       className={className}

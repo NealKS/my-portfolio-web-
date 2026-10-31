@@ -1,9 +1,10 @@
-import { useState, useRef, MouseEvent } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, CheckCircle2, Play, RefreshCw, ShieldCheck, Activity, Cpu } from 'lucide-react';
 import { PROJECTS } from '../data/portfolioData';
 import { ThemeMode, ProjectItem } from '../types';
 import { CodeCompileReveal } from './CodeCompileReveal';
+import { AxiomPreview } from './projects/AxiomPreview';
 
 interface ProjectsSectionProps {
   theme: ThemeMode;
@@ -21,20 +22,7 @@ export function ProjectsSection({
   const [auditStep, setAuditStep] = useState<'idle' | 'scanning' | 'passed'>('idle');
   const [tpsMode, setTpsMode] = useState<'normal' | 'peak'>('normal');
 
-  // Interactive state for Project 2: VisionControl Gesture Coordinates
-  const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 382, y: 144 });
-  const [confidence, setConfidence] = useState<number>(0.982);
-  const gestureAreaRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMoveVision = (e: MouseEvent<HTMLDivElement>) => {
-    if (!gestureAreaRef.current) return;
-    const rect = gestureAreaRef.current.getBoundingClientRect();
-    const x = Math.round(e.clientX - rect.left);
-    const y = Math.round(e.clientY - rect.top);
-    setCoords({ x, y });
-    const dynamicConf = 0.95 + (Math.sin(x + y) * 0.04);
-    setConfidence(Number(Math.min(0.999, Math.max(0.92, dynamicConf)).toFixed(3)));
-  };
+  const reduced = useReducedMotion();
 
   const handleExecuteAudit = () => {
     if (isAuditing) return;
@@ -60,13 +48,13 @@ export function ProjectsSection({
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Title matching Qurifolio Featured Project header */}
         <div className="text-center mb-16 sm:mb-20">
-          <CodeCompileReveal delay={0.05} tag="PROJECTS:EXEC" prefix="[0x20]">
+          <CodeCompileReveal delay={0.05}>
             <span className="text-teal-500 dark:text-teal-400 font-mono font-bold tracking-widest text-xs uppercase">
-              // Production Shipments
+              // Selected Engineering Projects
             </span>
           </CodeCompileReveal>
 
-          <CodeCompileReveal delay={0.15} prefix="[0x21]">
+          <CodeCompileReveal delay={0.15}>
             <h2
               className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mt-2 ${
                 theme === 'dark' ? 'text-white' : 'text-stone-950'
@@ -102,17 +90,17 @@ export function ProjectsSection({
               >
                 {/* Dashboard Mockup Header */}
                 <div
-                  className={`flex items-center justify-between pb-4 border-b text-xs ${
+                  className={`flex flex-wrap items-center justify-between gap-3 pb-4 border-b text-xs ${
                     theme === 'dark'
                       ? 'border-stone-800 text-stone-400'
                       : 'border-stone-200 text-stone-500'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex min-w-0 items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                    <span className="font-mono ml-2 text-stone-700 dark:text-stone-300 font-semibold">
+                    <span className="font-mono ml-2 break-words min-w-0 text-stone-700 dark:text-stone-300 font-semibold">
                       algorand-telemetry-engine v2.4
                     </span>
                   </div>
@@ -310,65 +298,18 @@ export function ProjectsSection({
             </div>
           </motion.article>
 
-          {/* ================= PROJECT 2: VISIONCONTROL ================= */}
-          <motion.article
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className={`rounded-3xl p-6 sm:p-10 border shadow-lg hover:shadow-2xl transition-all duration-300 ${
-              theme === 'dark'
-                ? 'bg-stone-900/90 border-stone-800 shadow-black/60'
-                : 'bg-white border-stone-200/90'
+          {/* ================= PROJECT 2: AXIOM ================= */}
+          <motion.article id="axiom-project"
+            initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 30 }}
+            whileInView={{ opacity: 1, y: 0, transition: { duration: reduced ? 0 : .7, delay: reduced ? 0 : .15 } }}
+            viewport={{ once: true, amount: .1 }}
+            whileHover={reduced ? undefined : { y: -4 }} transition={{ duration: .25 }}
+            className={`rounded-3xl p-6 sm:p-10 border shadow-lg hover:shadow-2xl transition-shadow duration-300 ${
+              theme === 'dark' ? 'bg-stone-900/90 border-stone-800 shadow-black/60' : 'bg-white border-stone-200/90'
             }`}
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-              {/* Left Side: UI Mockup / Interactive Canvas Preview */}
-              <div className="lg:col-span-7 bg-stone-900 rounded-2xl border border-stone-800 p-5 sm:p-6 shadow-xl relative overflow-hidden text-white">
-                <div className="flex items-center justify-between pb-3 border-b border-stone-800 text-xs">
-                  <span className="font-mono text-amber-400 flex items-center gap-2">
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>VISION_DRIVER_LIVE_PIPELINE</span>
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold">
-                    60 FPS • WEBSOCKET READY
-                  </span>
-                </div>
-
-                {/* Interactive Tracking Wireframe Visual - responds to hover/drag */}
-                <div
-                  ref={gestureAreaRef}
-                  onMouseMove={handleMouseMoveVision}
-                  className="mt-4 relative h-48 sm:h-56 bg-stone-950 rounded-xl border border-stone-800 flex items-center justify-center overflow-hidden cursor-crosshair select-none group"
-                  title="Move mouse here to simulate live gesture tracking coordinates"
-                >
-                  {/* Subtle Grid */}
-                  <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px]"></div>
-
-                  {/* Target Reticle & Landmarks */}
-                  <div className="relative flex flex-col items-center pointer-events-none">
-                    <div className="w-24 h-24 rounded-full border-2 border-dashed border-amber-500/70 flex items-center justify-center animate-spin-slow">
-                      <div className="w-16 h-16 rounded-full border border-amber-400/40"></div>
-                    </div>
-
-                    <div className="absolute -top-3 px-2 py-0.5 bg-amber-500 text-stone-950 font-mono font-bold text-[9px] rounded shadow-md">
-                      LANDMARK {confidence} CONFIDENCE
-                    </div>
-
-                    <div className="text-xs font-mono text-stone-300 mt-4 text-center px-2">
-                      Real-time Gesture Vector Coordinates [X: {coords.x}, Y: {coords.y}]
-                    </div>
-                  </div>
-
-                  {/* Floating data badges */}
-                  <div className="absolute bottom-3 left-3 font-mono text-[10px] text-stone-400 pointer-events-none">
-                    Latency: <span className="text-emerald-400 font-bold">8.4ms</span>
-                  </div>
-                  <div className="absolute bottom-3 right-3 font-mono text-[10px] text-stone-400 pointer-events-none">
-                    Model: <span className="text-amber-300">MediaPipe DenseMesh</span>
-                  </div>
-                </div>
-              </div>
+              <AxiomPreview theme={theme} />
 
               {/* Right Side: Narrative */}
               <div className="lg:col-span-5 space-y-4">
@@ -398,7 +339,7 @@ export function ProjectsSection({
                   {project2.tags.map((tag, idx) => (
                     <motion.span
                       key={idx}
-                      whileHover={{ scale: 1.08 }}
+                      whileHover={reduced ? undefined : { scale: 1.08 }}
                       className={`px-2.5 py-1 rounded-md text-xs font-mono font-medium transition-colors ${
                         theme === 'dark'
                           ? 'bg-stone-800 text-stone-300 border border-stone-700/60 hover:text-amber-400'
@@ -412,13 +353,13 @@ export function ProjectsSection({
 
                 <div className="pt-4 flex items-center gap-4">
                   <motion.button
-                    id="case-study-vision-btn"
+                    id="case-study-axiom-btn"
                     onClick={() => onOpenCaseStudy(project2)}
-                    whileHover={{ scale: 1.04, x: 4 }}
-                    whileTap={{ scale: 0.94 }}
+                    whileHover={reduced ? undefined : { scale: 1.04, x: 4 }}
+                    whileTap={reduced ? undefined : { scale: 0.94 }}
                     className="inline-flex items-center text-sm font-bold text-amber-600 dark:text-amber-400 hover:text-amber-500 group cursor-pointer"
                   >
-                    <span>View Demonstration</span>
+                    <span>Explore Case Study</span>
                     <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </motion.button>
                 </div>

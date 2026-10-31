@@ -1,0 +1,16 @@
+.axiom-preview { background: #fafaf9; color: #1c1917; border-color: #e7e5e4; }
+.axiom-preview[data-theme="dark"] { background: #0c0a09; color: #f5f5f4; border-color: #292524; }
+.axiom-preview .axiom-muted { color: #57534e; }
+.axiom-preview[data-theme="dark"] .axiom-muted { color: #a8a29e; }
+.axiom-panel, .axiom-signal { background: #fff; border-color: #e7e5e4; }
+.axiom-preview[data-theme="dark"] .axiom-panel, .axiom-preview[data-theme="dark"] .axiom-signal { background: #1c1917; border-color: #292524; }
+.axiom-demo-label { background: rgb(245 158 11 / .1); color: #92400e; }
+.axiom-preview[data-theme="dark"] .axiom-demo-label { color: #fbbf24; }
+.axiom-preview .axiom-signal:is(:hover, [aria-pressed="true"]) { border-color: #d97706; background: rgb(245 158 11 / .08); }
+.axiom-evidence { min-height: 132px; }
+.axiom-status { animation: axiom-breathe 3s ease-in-out 3; }
+@keyframes axiom-breathe { 50% { opacity: .4; } }
+@media (prefers-reduced-motion: reduce) {
+  #axiom-project { transform: none !important; }
+  #axiom-project *, .axiom-case-study * { animation: none !important; transition-duration: 0s !important; }
+}

@@ -50,7 +50,7 @@ export function AboutSection({ theme, onExploreProjects, onContactClick }: About
           {/* Left Column: Bio & Core Metrics with Staggered Code-Compile Reveal */}
           <div className="lg:col-span-6 space-y-8">
             {/* Sub-header Tag */}
-            <CodeCompileReveal delay={0.05} tag="COMPILE:OK" prefix="[0x01]">
+            <CodeCompileReveal delay={0.05}>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-stone-800/90 border border-teal-500/30 text-teal-400 text-xs uppercase tracking-widest font-mono font-bold shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
                 <span>Hello World // Neal.init()</span>
@@ -58,14 +58,14 @@ export function AboutSection({ theme, onExploreProjects, onContactClick }: About
             </CodeCompileReveal>
 
             {/* Section Main Title */}
-            <CodeCompileReveal delay={0.15} prefix="[0x02]">
+            <CodeCompileReveal delay={0.15}>
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
                 I’M NEAL KOTTILINGAL
               </h2>
             </CodeCompileReveal>
 
             {/* Descriptive Narrative */}
-            <CodeCompileReveal delay={0.25} prefix="[0x03]">
+            <CodeCompileReveal delay={0.25}>
               <p className="text-stone-300 text-base sm:text-lg leading-relaxed font-normal">
                 {PERSONAL_INFO.bio}
               </p>
@@ -95,7 +95,7 @@ export function AboutSection({ theme, onExploreProjects, onContactClick }: About
             </StaggerCompileContainer>
 
             {/* Quick Action Buttons & CLI Pill with Cyber Hover Scanline Effects */}
-            <CodeCompileReveal delay={0.45} prefix="[0x04]">
+            <CodeCompileReveal delay={0.45}>
               <div className="pt-2 flex flex-wrap items-center gap-3.5">
                 <motion.button
                   id="about-view-works-btn"

@@ -1,7 +1,9 @@
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { X, Printer, Download, Check, Mail, MapPin, Globe, Award } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { ThemeMode } from '../types';
+
+import { OverlayDialog } from './OverlayDialog';
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -9,42 +11,22 @@ interface ResumeModalProps {
   onClose: () => void;
 }
 
-export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
-  if (!isOpen) return null;
-
+function ResumeContent({ theme, onClose }: Omit<ResumeModalProps, 'isOpen'>) {
+  const reduced = useReducedMotion();
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-black/75 backdrop-blur-sm"
-        />
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className={`relative w-full max-w-4xl rounded-3xl p-6 sm:p-10 shadow-2xl z-10 border max-h-[90vh] overflow-y-auto ${
-            theme === 'dark'
-              ? 'bg-[#0E1318] border-stone-800 text-stone-200'
-              : 'bg-white border-stone-200 text-stone-900'
-          }`}
-        >
+    <OverlayDialog titleId="resume-modal-title" onClose={onClose} panelClassName={`resume-print-sheet w-full max-w-4xl rounded-3xl p-4 sm:p-10 shadow-2xl border max-h-[90dvh] overflow-y-auto ${theme === 'dark' ? 'bg-[#0E1318] border-stone-800 text-stone-200' : 'bg-white border-stone-200 text-stone-900'}`}>
           {/* Close & Action Bar */}
-          <div className="flex items-center justify-between pb-6 mb-6 border-b border-stone-200 dark:border-stone-800">
+          <div className="resume-action-bar flex flex-wrap items-center justify-between gap-3 pb-6 mb-6 border-b border-stone-200 dark:border-stone-800">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 font-black flex items-center justify-center text-sm shadow-md">
                 NK
               </div>
               <div>
-                <h3 className="text-lg font-bold">Curriculum Vitae</h3>
+                <h3 id="resume-modal-title" className="text-lg font-bold">Curriculum Vitae</h3>
                 <p className="text-xs text-stone-500 dark:text-stone-400">
                   Neal Kottilingal • Verified Engineering Profile
                 </p>
@@ -53,9 +35,9 @@ export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
 
             <div className="flex items-center gap-2">
               <motion.button
-                onClick={handlePrint}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.94 }}
+                aria-label="Print or save CV as PDF" onClick={handlePrint}
+                whileHover={reduced ? undefined : { scale: 1.05 }}
+                whileTap={reduced ? undefined : { scale: .94 }}
                 className="px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Print or Save as PDF"
               >
@@ -63,9 +45,9 @@ export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
                 <span className="hidden sm:inline">Print / Save PDF</span>
               </motion.button>
               <motion.button
-                onClick={onClose}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
+                data-autofocus aria-label="Close CV" onClick={onClose}
+                whileHover={reduced ? undefined : { scale: 1.1, rotate: 90 }}
+                whileTap={reduced ? undefined : { scale: .9 }}
                 className="p-1.5 rounded-full hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-500 hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -158,7 +140,7 @@ export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
 
               <div className="space-y-5">
                 <div className="border-l-2 border-amber-500 pl-4 space-y-1">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-bold text-sm sm:text-base">Full Stack & Web3 Engineer</h3>
                     <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
                       2022 — Present
@@ -184,7 +166,7 @@ export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
                 </div>
 
                 <div className="border-l-2 border-stone-400 dark:border-stone-700 pl-4 space-y-1">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-bold text-sm sm:text-base">Backend & Systems Developer</h3>
                     <span className="text-xs font-mono text-stone-500 dark:text-stone-400">
                       2021 — 2022
@@ -206,8 +188,10 @@ export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
               </div>
             </div>
           </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+    </OverlayDialog>
   );
+}
+
+export function ResumeModal({ isOpen, theme, onClose }: ResumeModalProps) {
+  return <AnimatePresence>{isOpen && <ResumeContent theme={theme} onClose={onClose} />}</AnimatePresence>;
 }

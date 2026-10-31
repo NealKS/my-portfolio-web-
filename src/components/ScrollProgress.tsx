@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, useScroll, useSpring, AnimatePresence } from 'motion/react';
+import { motion, useScroll, useSpring, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ArrowUp } from 'lucide-react';
 import { ThemeMode } from '../types';
 
@@ -8,6 +8,7 @@ interface ScrollProgressProps {
 }
 
 export function ScrollProgress({ theme }: ScrollProgressProps) {
+  const reduced = useReducedMotion();
   const { scrollYProgress, scrollY } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 120,
@@ -31,7 +32,7 @@ export function ScrollProgress({ theme }: ScrollProgressProps) {
   }, [scrollYProgress]);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' });
   };
 
   const circumference = 2 * Math.PI * 18; // radius = 18
@@ -93,7 +94,7 @@ export function ScrollProgress({ theme }: ScrollProgressProps) {
               {/* Arrow Icon with Upward Bounce Hover Motion */}
               <motion.div
                 className="relative z-10 flex items-center justify-center text-amber-500 group-hover:text-amber-400"
-                animate={{ y: [0, -2, 0] }}
+                animate={{ y: 0 }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <ArrowUp className="w-5 h-5 stroke-[2.5]" />
